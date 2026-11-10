@@ -18,7 +18,7 @@ const sv = (tag, attrs = {}, ...kids) => {
 };
 const fmt = (n) => Math.round(n).toLocaleString('en-US');
 const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
-const BLUE = '#3987e5', ORANGE = '#d95926', GREEN = '#199e70', AMBER = '#fab219', T2 = '#c3c2b7', MUTED = '#8e8d86', LINE = '#383835';
+const BLUE = '#3987e5', ORANGE = '#d95926', GREEN = '#199e70', AMBER = '#e5a000', T2 = '#4a4943', MUTED = '#6f6e67', LINE = '#dcdad2';
 const EXPLORER = 'explorer/index.html';
 
 // ------------------------------------------------------------------ stage + navigation
@@ -126,15 +126,15 @@ const onStep = {};
   const svg = sv('svg', { viewBox: `0 0 ${W} ${H}`, class: 'fx', 'data-s': '3' });
   svg.style.marginTop = '14px'; svg.style.height = '190px';
   const defs = sv('defs', {}, sv('marker', { id: 'ah', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' },
-    sv('path', { d: 'M0 0L10 5L0 10z', fill: '#f0efec' })));
+    sv('path', { d: 'M0 0L10 5L0 10z', fill: '#1a1a19' })));
   svg.append(defs);
-  xs.slice(1).forEach((x, i) => svg.append(sv('line', { x1: xs[i] + 22, y1: 40, x2: x - 24, y2: 40, stroke: '#f0efec', 'stroke-width': 2.2, 'marker-end': 'url(#ah)' })));
+  xs.slice(1).forEach((x, i) => svg.append(sv('line', { x1: xs[i] + 22, y1: 40, x2: x - 24, y2: 40, stroke: '#1a1a19', 'stroke-width': 2.2, 'marker-end': 'url(#ah)' })));
   chain.forEach((label, i) => {
     const isD = label.startsWith('เขต');
-    svg.append(sv('circle', { cx: xs[i], cy: 40, r: 18, fill: isD ? BLUE : GREEN, stroke: '#1a1a19', 'stroke-width': 2 }));
+    svg.append(sv('circle', { cx: xs[i], cy: 40, r: 18, fill: isD ? BLUE : GREEN, stroke: '#fcfcfb', 'stroke-width': 2 }));
     const fo = sv('foreignObject', { x: xs[i] - 82, y: 68, width: 164, height: 110 });
     const d = document.createElement('div');
-    d.style.cssText = 'font-size:15px;line-height:1.3;color:#c3c2b7;text-align:center;overflow-wrap:anywhere;font-family:inherit';
+    d.style.cssText = 'font-size:15px;line-height:1.3;color:#4a4943;text-align:center;overflow-wrap:anywhere;font-family:inherit';
     d.textContent = label; fo.append(d); svg.append(fo);
   });
   box.append(svg);
@@ -152,10 +152,10 @@ const onStep = {};
 const glyph = (inner) => `<svg viewBox="0 0 300 74">${inner}</svg>`;
 const C = (x, y, r, f) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}"/>`;
 const L = (x1, y1, x2, y2, w = 2, c = '#8e8d86', ex = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${ex}/>`;
-const ARR = '<defs><marker id="pa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f0efec"/></marker></defs>';
+const ARR = '<defs><marker id="pa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1a1a19"/></marker></defs>';
 const PRIN = [
   { t: 'Nodes and directed edges', p: 'An agency is a node. A handoff is an arrow from the agency that passed the ticket to the one that received it.', q: 'Who passes to whom?',
-    g: glyph(ARR + L(95, 37, 195, 37, 2.4, '#f0efec', 'marker-end="url(#pa)"') + C(80, 37, 15, GREEN) + C(210, 37, 15, GREEN)) },
+    g: glyph(ARR + L(95, 37, 195, 37, 2.4, '#1a1a19', 'marker-end="url(#pa)"') + C(80, 37, 15, GREEN) + C(210, 37, 15, GREEN)) },
   { t: 'Weight and time', p: 'Edge width = tickets per week. The time slider replays how the network built up.', q: 'When did this route start to matter?',
     g: glyph(L(40, 16, 260, 16, 1, '#8e8d86') + L(40, 36, 260, 36, 3, '#8e8d86') + L(40, 58, 260, 58, 7, '#8e8d86')) },
   { t: 'Centrality', p: 'Degree: busy. PageRank: well connected. Betweenness: sitting on many routes between others.', q: 'Who is a bottleneck?',
@@ -163,9 +163,9 @@ const PRIN = [
   { t: 'Paths and length', p: 'A ticket’s chain is a walk through the graph. Its length counts the handoffs; a shortest path shows the direct route.', q: 'Is there a shorter way?',
     g: glyph(L(50, 50, 120, 50) + L(120, 50, 190, 50) + L(190, 50, 250, 50) + L(50, 50, 250, 18, 2, AMBER, 'stroke-dasharray="5 4"') + [50, 120, 190, 250].map((x) => C(x, 50, 9, GREEN)).join('') + C(250, 18, 9, AMBER)) },
   { t: 'Reciprocity', p: 'When A→B and B→A both exist, responsibility has no clear direction.', q: 'Who is the right owner?',
-    g: glyph(ARR + '<path d="M95 28 Q150 6 205 28" fill="none" stroke="#f0efec" stroke-width="2.2" marker-end="url(#pa)"/><path d="M205 46 Q150 68 95 46" fill="none" stroke="#f0efec" stroke-width="2.2" marker-end="url(#pa)"/>' + C(80, 37, 15, GREEN) + C(220, 37, 15, GREEN)) },
+    g: glyph(ARR + '<path d="M95 28 Q150 6 205 28" fill="none" stroke="#1a1a19" stroke-width="2.2" marker-end="url(#pa)"/><path d="M205 46 Q150 68 95 46" fill="none" stroke="#1a1a19" stroke-width="2.2" marker-end="url(#pa)"/>' + C(80, 37, 15, GREEN) + C(220, 37, 15, GREEN)) },
   { t: 'Communities', p: 'Louvain finds groups of agencies that mostly pass tickets among themselves.', q: 'Which agencies work as a team?',
-    g: glyph(L(40, 20, 80, 50) + L(80, 50, 60, 66, 2) + L(40, 20, 60, 66) + L(200, 20, 240, 50) + L(240, 50, 220, 66) + L(200, 20, 220, 66) + L(80, 50, 200, 20, 1, '#555') +
+    g: glyph(L(40, 20, 80, 50) + L(80, 50, 60, 66, 2) + L(40, 20, 60, 66) + L(200, 20, 240, 50) + L(240, 50, 220, 66) + L(200, 20, 220, 66) + L(80, 50, 200, 20, 1, '#bbb9b0') +
       [[40, 20], [80, 50], [60, 66]].map(([x, y]) => C(x, y, 9, BLUE)).join('') + [[200, 20], [240, 50], [220, 66]].map(([x, y]) => C(x, y, 9, ORANGE)).join('')) },
 ];
 $('#principles').append(...PRIN.map((p, i) => {
@@ -208,8 +208,8 @@ function barChartLen() {
     const x = pl + 10 + i * (bw + gap), top = y(r.finished_pct), hot = r.len >= 5;
     svg.append(sv('rect', { x, y: top, width: bw, height: y(0) - top, rx: 5, fill: hot ? ORANGE : BLUE }));
     svg.append(sv('rect', { x, y: y(0) - 4, width: bw, height: 4, fill: hot ? ORANGE : BLUE }));
-    const v = sv('text', { x: x + bw / 2, y: top - 8, 'text-anchor': 'middle', fill: '#f0efec', 'font-size': 18, 'font-weight': 700 }); v.textContent = r.finished_pct + '%'; svg.append(v);
-    const lb = sv('text', { x: x + bw / 2, y: y(0) + 24, 'text-anchor': 'middle', fill: '#f0efec', 'font-size': 16 }); lb.textContent = r.label; svg.append(lb);
+    const v = sv('text', { x: x + bw / 2, y: top - 8, 'text-anchor': 'middle', fill: '#1a1a19', 'font-size': 18, 'font-weight': 700 }); v.textContent = r.finished_pct + '%'; svg.append(v);
+    const lb = sv('text', { x: x + bw / 2, y: y(0) + 24, 'text-anchor': 'middle', fill: '#1a1a19', 'font-size': 16 }); lb.textContent = r.label; svg.append(lb);
     const nn = sv('text', { x: x + bw / 2, y: y(0) + 44, 'text-anchor': 'middle', fill: MUTED, 'font-size': 12 }); nn.textContent = `n=${r.n_old}`; svg.append(nn);
     const md = sv('text', { x: x + bw / 2, y: y(0) + 62, 'text-anchor': 'middle', fill: T2, 'font-size': 12 }); md.textContent = r.median_days != null ? `${r.median_days} d` : ''; svg.append(md);
   });
@@ -229,9 +229,9 @@ function barChartCat() {
   cats.forEach((c, i) => {
     const y = 36 + i * rowH, w = ((W - pl - 190) * c.agencies) / max;
     const th = c.category.split(' · ');
-    const t = sv('text', { x: pl - 12, y: y + 20, 'text-anchor': 'end', fill: '#f0efec', 'font-size': 15 }); t.textContent = clip(th[1] || th[0], 26); svg.append(t);
+    const t = sv('text', { x: pl - 12, y: y + 20, 'text-anchor': 'end', fill: '#1a1a19', 'font-size': 15 }); t.textContent = clip(th[1] || th[0], 26); svg.append(t);
     svg.append(sv('rect', { x: pl, y: y + 4, width: w, height: 24, rx: 5, fill: GREEN }));
-    const v = sv('text', { x: pl + w + 8, y: y + 21, fill: '#f0efec', 'font-size': 15, 'font-weight': 700 }); v.textContent = c.agencies; svg.append(v);
+    const v = sv('text', { x: pl + w + 8, y: y + 21, fill: '#1a1a19', 'font-size': 15, 'font-weight': 700 }); v.textContent = c.agencies; svg.append(v);
     const k = sv('text', { x: pl + w + 8 + String(c.agencies).length * 9 + 8, y: y + 21, fill: MUTED, 'font-size': 12 }); k.textContent = `${fmt(c.tickets)} tickets`; svg.append(k);
   });
   $('#chart-cat').append(svg);

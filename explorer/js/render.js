@@ -60,7 +60,7 @@ export class GraphView {
       else if (colorBy === 'state') {
         const st = m.stateAt(i, t);
         c = st && states && states[st] ? states[st].color : THEME.neutral;
-        if (!st) c = '#5d5c56';
+        if (!st) c = '#9a9992';
       } else c = typeColors[m.nType[i]];
       col[i] = c;
     }

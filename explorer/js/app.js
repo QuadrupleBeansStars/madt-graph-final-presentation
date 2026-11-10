@@ -128,7 +128,7 @@ function updateLegend() {
   const items = [];
   if (S.colorBy === 'state' && m.meta.nodeStates) {
     for (const s of Object.values(m.meta.nodeStates)) items.push([s.color, s.label]);
-    items.push(['#5d5c56', 'Not a complaint']);
+    items.push(['#9a9992', 'Not a complaint']);
   } else if (S.colorBy === 'community') {
     (m.meta.communities || []).slice(0, THEME.cat.length).forEach((c, i) =>
       items.push([THEME.cat[i], `#${c.id + 1} · ${c.top} (${fmtNum(c.size)})`]));
@@ -160,7 +160,7 @@ function drawHist() {
   const bw = W / bins;
   for (let k = 0; k < bins; k++) {
     const hh = Math.max(1, Math.pow(data[k] / mx, 0.6) * (H - 2));
-    ctx.fillStyle = (k + 0.5) / bins <= S.f ? '#3987e5' : '#3d3d39';
+    ctx.fillStyle = (k + 0.5) / bins <= S.f ? '#3987e5' : '#d6d4cc';
     ctx.fillRect(k * bw + 0.5, H - hh, Math.max(1, bw - 1.5), hh);
   }
 }
