@@ -141,6 +141,29 @@ STATE_EN = {
 }
 
 
+STATE_MAP = {"รอรับเรื่อง": "start", "กำลังดำเนินการ": "inprogress", "เสร็จสิ้น": "finish", "ไม่เกี่ยวข้อง": "irrelevant",
+             "ส่งต่อ": "forward"}
+
+
+def load_tickets(paths) -> pd.DataFrame:
+    """Read one or more exports (monthly files, a glob...), unify `state`, de-duplicate tickets."""
+    import glob
+    files = []
+    for p in ([paths] if isinstance(paths, str) else paths):
+        files += sorted(glob.glob(p)) or [p]
+    frames = [pd.read_csv(f, low_memory=False) for f in files]
+    df = pd.concat(frames, ignore_index=True)
+    print(f"  files: {len(files)}  rows: {len(df):,}")
+    if "state" in df:
+        df["state"] = df["state"].astype(str).str.strip().replace(STATE_MAP)
+    if "last_activity" in df:  # a ticket can appear in several exports: keep the freshest copy
+        df = df.sort_values("last_activity").drop_duplicates("ticket_id", keep="last")
+    else:
+        df = df.drop_duplicates("ticket_id", keep="last")
+    print(f"  after de-duplication: {len(df):,}")
+    return df
+
+
 def _pct(old, min_n=10):
     return None if len(old) < min_n else round(100 * float(old["fin"].mean()))
 
@@ -154,14 +177,14 @@ def _days(mins):
 
 
 def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, min_routed=4):
-    df = pd.read_csv(inp, low_memory=False)
+    df = load_tickets(inp)
     need = ["ticket_id", "type", "organization", "district", "timestamp", "state"]
     miss = [c for c in need if c not in df.columns]
     if miss:
         raise SystemExit(f"Missing columns {miss}. Present: {list(df.columns)}")
     df = df.dropna(subset=["organization", "district", "timestamp"]).copy()
     df["district"] = df["district"].astype(str).str.strip()
-    ts = pd.to_datetime(df["timestamp"], errors="coerce").dt.tz_localize("Asia/Bangkok", ambiguous="NaT", nonexistent="NaT")
+    ts = pd.to_datetime(df["timestamp"], errors="coerce", format="mixed").dt.tz_localize("Asia/Bangkok", ambiguous="NaT", nonexistent="NaT")
     df["ts_ms"] = (ts.dt.tz_convert("UTC") - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(milliseconds=1)
     df = df[ts.notna()].copy()
     print(f"  tickets: {len(df):,}")
@@ -381,7 +404,7 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--input", required=True)
+    ap.add_argument("--input", required=True, nargs="+", help="one or more CSVs / globs, e.g. data/bangkok_*.csv")
     ap.add_argument("--out", default="data/traffy.json")
     ap.add_argument("--insights", default="data/traffy_insights.json")
     ap.add_argument("--min-agency", type=int, default=8)

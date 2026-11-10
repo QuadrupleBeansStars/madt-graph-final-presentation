@@ -35,7 +35,7 @@ after merging) and `/ (root)`. The slides are at the site root, the explorer at 
 Python 3.10+ with `pandas`, `numpy`, `networkx`, `scipy`.
 
 ```bash
-python pipeline/traffy_handoff.py --input path/to/traffy_report.csv
+python pipeline/traffy_handoff.py --input "path/to/bangkok_*.csv"   # one or several files / globs
 # writes data/traffy.json (graph for the viewer) and data/traffy_insights.json (numbers on the slides)
 ```
 
