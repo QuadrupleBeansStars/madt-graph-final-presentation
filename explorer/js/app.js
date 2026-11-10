@@ -4,6 +4,8 @@ import { GraphView } from './render.js';
 import { THEME, fmtDate, fmtNum, pretty } from './theme.js';
 
 const $ = (id) => document.getElementById(id);
+const dataUrl = (f) => new URL(f.replace(/^data\//, ''), new URL('../../data/', import.meta.url)).href;
+
 function h(tag, attrs = {}, ...kids) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -221,7 +223,7 @@ function renderDetails(keepScroll) {
     nbrs.length ? h('ul', {}, nbrs.map(({ node, edge }) =>
       h('li', { onclick: () => selectNode(node, { center: true }) }, swatch(S.typeColors[m.nType[node]]),
         m.nodes[node].label.length > 30 ? m.nodes[node].label.slice(0, 29) + '…' : m.nodes[node].label,
-        h('small', { class: 'muted' }, pretty(m.edgeTypeNames[m.eType[edge]]))))) : '',
+        h('small', { class: 'muted' }, (m.dirType[m.eType[edge]] ? (m.eS[edge] === i ? '→ ' : '← ') : '') + pretty(m.edgeTypeNames[m.eType[edge]]) + (m.edges[edge].note ? ' · ' + m.edges[edge].note : ''))))) : '',
     h('div', { class: 'acts' },
       h('button', { class: 'btn', onclick: () => startPath(i) }, 'Path from here…'),
       h('button', { class: 'btn', onclick: () => { S.layout.fixed[i] ^= 1; view.invalidate(); } }, 'Pin / unpin')),
@@ -397,7 +399,7 @@ async function loadDataset(id, hash = {}) {
   setPathMode(false);
   let raw;
   try {
-    const res = await fetch(info.file);
+    const res = await fetch(dataUrl(info.file));
     if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
     raw = await res.json();
   } catch (err) {
@@ -430,7 +432,7 @@ function updateHash() {
   const p = new URLSearchParams();
   if (S.ds) p.set('d', S.ds.id);
   if (S.sel >= 0) p.set('sel', S.model.nodes[S.sel].id);
-  history.replaceState(null, '', '#' + p.toString());
+  try { history.replaceState(null, '', '#' + p.toString()); } catch (_) { /* sandboxed frames may refuse */ }
 }
 
 // ------------------------------------------------------------------ playback + main loop
@@ -559,9 +561,9 @@ window.GraphViewer = api;
 async function boot() {
   wire();
   let manifest;
-  try { manifest = await (await fetch('data/datasets.json')).json(); }
+  try { manifest = await (await fetch(dataUrl('datasets.json'))).json(); }
   catch (err) {
-    $('loading').textContent = `Could not load data/datasets.json (${err.message}). Serve this folder over HTTP (python -m http.server), not file://.`;
+    $('loading').textContent = `Could not load ../data/datasets.json (${err.message}). Serve this folder over HTTP (python -m http.server), not file://.`;
     return;
   }
   S.manifest = manifest;

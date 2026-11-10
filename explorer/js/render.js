@@ -176,6 +176,35 @@ export class GraphView {
       ctx.strokeStyle = THEME.path; ctx.lineWidth = 3; ctx.stroke();
     }
 
+    // --- arrowheads for directed edge types (focus + path always; everything once zoomed in)
+    if (m.dirType && m.dirType.some((x) => x)) {
+      const drawArrows = (list, color, size) => {
+        ctx.beginPath();
+        for (const e of list) {
+          if (!m.dirType[m.eType[e]]) continue;
+          const a = m.eS[e], c = m.eT[e];
+          const dx = sx[c] - sx[a], dy = sy[c] - sy[a], len = Math.hypot(dx, dy);
+          if (len < 22 || !onScreen(c)) continue;
+          const ux = dx / len, uy = dy / len, rr = this.screenR(c) + 1.5;
+          const px = sx[c] - ux * rr, py = sy[c] - uy * rr;
+          ctx.moveTo(px, py);
+          ctx.lineTo(px - ux * size + uy * size * 0.45, py - uy * size - ux * size * 0.45);
+          ctx.lineTo(px - ux * size - uy * size * 0.45, py - uy * size + ux * size * 0.45);
+          ctx.closePath();
+        }
+        ctx.fillStyle = color; ctx.fill();
+      };
+      if (!focus && cam.k > 2.2) {
+        const all = []; for (let e = 0; e < E; e++) if (m.evis[e]) all.push(e);
+        ctx.globalAlpha = 0.55; drawArrows(all, THEME.edgeHi, 5); ctx.globalAlpha = 1;
+      }
+      if (focus) {
+        const fe = []; for (let e = 0; e < E; e++) if (m.evis[e] && focus.edges[e]) fe.push(e);
+        ctx.globalAlpha = 0.9; drawArrows(fe, THEME.edgeHi, 6); ctx.globalAlpha = 1;
+      }
+      if (path && path.edges.length) drawArrows(path.edges, THEME.path, 8);
+    }
+
     // --- nodes: small ones batched per colour (one fill per colour), big ones get a ring
     const drawGroup = (pred) => {
       const groups = new Map(), big = [];
@@ -260,7 +289,11 @@ export class GraphView {
   }
 
   // ------------------------------------------------------------------ pointer events
-  _local(e) { const r = this.cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+  _local(e) {
+    // divide by the CSS scale so this also works inside a scaled container (the slide deck)
+    const r = this.cv.getBoundingClientRect(), sx = r.width / this.w || 1, sy = r.height / this.h || 1;
+    return [(e.clientX - r.left) / sx, (e.clientY - r.top) / sy];
+  }
 
   _bind() {
     const cv = this.cv;

@@ -1,8 +1,8 @@
 """Generate SYNTHETIC demo data and run the real adapters on it.
 
 Nothing here is real. The CSVs mimic the column layout of the ICIJ Offshore Leaks
-bulk export and of a Traffy Fondue ticket export, so the adapters (and the viewer)
-can be developed and demoed without downloading the real datasets. Names, links,
+bulk export, so the Offshore adapter (and the viewer) can be demoed without downloading
+the real dataset. Names, links,
 dates and counts are invented.
 
     python pipeline/make_demo_data.py
@@ -20,7 +20,6 @@ HERE = Path(__file__).parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 import offshore_adapter  # noqa: E402
-import traffy_adapter  # noqa: E402
 
 SAMPLE = HERE / "sample"
 DAY = 86_400_000
@@ -137,78 +136,6 @@ def make_offshore(seed=11):
     return out
 
 
-# ---------------------------------------------------------------------------- traffy
-DISTRICTS = """Phra Nakhon,Dusit,Nong Chok,Bang Rak,Bang Khen,Bang Kapi,Pathum Wan,Pom Prap Sattru Phai,
-Phra Khanong,Min Buri,Lat Krabang,Yan Nawa,Samphanthawong,Phaya Thai,Thon Buri,Bangkok Yai,Huai Khwang,
-Khlong San,Taling Chan,Bangkok Noi,Bang Khun Thian,Phasi Charoen,Nong Khaem,Rat Burana,Bang Phlat,Din Daeng,
-Bueng Kum,Sathon,Bang Sue,Chatuchak,Bang Kho Laen,Prawet,Khlong Toei,Suan Luang,Chom Thong,Don Mueang,
-Ratchathewi,Lat Phrao,Watthana,Bang Khae,Lak Si,Sai Mai,Khan Na Yao,Saphan Sung,Wang Thonglang,
-Khlong Sam Wa,Bang Na,Thawi Watthana,Thung Khru,Bang Bon""".replace("\n", "").split(",")
-CATS = ["Road", "Sidewalk", "Flood", "Light", "Safety", "Cleanliness", "Drain", "Bridge", "Traffic"]
-AGENCY = {"Road": "Public Works Dept.", "Sidewalk": "Public Works Dept.", "Bridge": "Public Works Dept.",
-          "Flood": "Drainage & Sewerage Dept.", "Drain": "Drainage & Sewerage Dept.",
-          "Light": "Public Lighting Division", "Safety": "Municipal Enforcement Dept.",
-          "Cleanliness": "Environment Dept.", "Traffic": "Traffic & Transport Dept."}
-
-
-def make_traffy(seed=5, n=60_000):
-    rng = np.random.default_rng(seed)
-    out = SAMPLE / "traffy"
-    out.mkdir(parents=True, exist_ok=True)
-    districts = [d.strip() for d in DISTRICTS]
-    nd, nc = len(districts), len(CATS)
-    cidx = {c: i for i, c in enumerate(CATS)}
-
-    aff = rng.gamma(3.0, 1.0, (nd, nc))
-    flood_prone = rng.choice(nd, 12, replace=False)
-    central = rng.choice(nd, 10, replace=False)
-    outer = rng.choice(nd, 12, replace=False)
-    aff[np.ix_(flood_prone, [cidx["Flood"], cidx["Drain"]])] *= 3.2
-    aff[np.ix_(central, [cidx["Traffic"], cidx["Sidewalk"]])] *= 2.6
-    aff[np.ix_(outer, [cidx["Road"], cidx["Light"]])] *= 2.0
-    vol = rng.lognormal(0, 0.5, nd)
-    vol /= vol.sum()
-
-    start = pd.Timestamp("2022-06-01")
-    days = pd.date_range(start, "2026-10-31", freq="D")
-    t = np.arange(len(days))
-    doy = days.dayofyear.to_numpy()
-    season = np.exp(-(((doy - 270) / 35.0) ** 2))
-    intensity = (0.35 + 1.0 * (1 - np.exp(-t / 220.0))) * (1 + 0.5 * season)
-    intensity /= intensity.sum()
-
-    day_i = rng.choice(len(days), size=n, p=intensity)
-    d_i = rng.choice(nd, size=n, p=vol)
-    mult = np.ones((len(days), nc))
-    mult[:, cidx["Flood"]] += 3.0 * season
-    mult[:, cidx["Drain"]] += 1.8 * season
-    mult[:, cidx["Traffic"]] *= 1 + t / len(days)
-    W = aff[d_i] * mult[day_i]
-    cum = W.cumsum(1)
-    c_i = (cum < (rng.random(n) * cum[:, -1])[:, None]).sum(1)
-
-    secs = rng.integers(6 * 3600, 22 * 3600, n)
-    ts = days[day_i] + pd.to_timedelta(secs, unit="s")
-    age = (days[-1] - days[day_i]).days.to_numpy()
-    p_fin = np.where(age > 30, 0.86, 0.5)
-    u = rng.random(n)
-    state = np.where(u < p_fin, "finished", np.where(u < p_fin + (1 - p_fin) * 0.5, "in_progress", "reported"))
-    lag = np.where(state == "finished", rng.lognormal(1.5, 1.0, n),
-                   np.where(state == "in_progress", rng.exponential(3.0, n), 0.0))
-    last = ts + pd.to_timedelta(lag, unit="D")
-    org = np.array([AGENCY[CATS[c]] for c in c_i])
-    rerouted = rng.random(n) < 0.12
-    org[rerouted] = "District Office"
-    df = pd.DataFrame({
-        "ticket_id": [f"DEMO-{k:06d}" for k in range(n)],
-        "type": [CATS[c] for c in c_i], "organization": org,
-        "timestamp": ts.strftime("%Y-%m-%d %H:%M:%S"), "last_activity": last.strftime("%Y-%m-%d %H:%M:%S"),
-        "state": state, "district": [districts[d] for d in d_i], "province": "Bangkok",
-    })
-    df.to_csv(out / "tickets.csv", index=False)
-    return out / "tickets.csv"
-
-
 def main():
     print("== synthetic Offshore-Leaks-style CSVs")
     off_dir = make_offshore()
@@ -216,20 +143,7 @@ def main():
     s1 = offshore_adapter.build(off_dir, ROOT / "data" / "offshore.json", countries="Thailand",
                                 max_nodes=3500, demo=True, title="Offshore Leaks (demo data)")
     print("   ", s1)
-    print("== synthetic Traffy-style tickets")
-    tk = make_traffy()
-    print("== running traffy adapter")
-    s2 = traffy_adapter.build(tk, ROOT / "data" / "traffy.json", sample=400, demo=True,
-                              title="Traffy Fondue (demo data)")
-    print("   ", s2)
-    manifest = [
-        {"id": "offshore", "file": "data/offshore.json", "title": "Offshore Leaks",
-         "blurb": "Companies, people & intermediaries"},
-        {"id": "traffy", "file": "data/traffy.json", "title": "Traffy Fondue",
-         "blurb": "Bangkok complaints by district"},
-    ]
-    (ROOT / "data" / "datasets.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    print("== wrote data/datasets.json")
+    print("   (Traffy is built from real data: pipeline/traffy_handoff.py; datasets.json is hand-maintained)")
 
 
 if __name__ == "__main__":

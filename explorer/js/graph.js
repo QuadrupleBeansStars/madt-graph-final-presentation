@@ -14,6 +14,7 @@ export class GraphModel {
     const typeIdx = Object.fromEntries(this.typeNames.map((k, i) => [k, i]));
     this.edgeTypeNames = [...new Set(edges.map((e) => e.type))];
     const etIdx = Object.fromEntries(this.edgeTypeNames.map((k, i) => [k, i]));
+    this.dirType = Uint8Array.from(this.edgeTypeNames, (t) => ((meta.directedEdges || []).includes(t) ? 1 : 0));
 
     this.nType = new Uint8Array(N);
     this.nStart = new Float64Array(N);

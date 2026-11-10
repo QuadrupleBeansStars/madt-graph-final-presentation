@@ -152,6 +152,8 @@ def export(builder: GraphBuilder, path, meta: dict, series_meta: dict | None = N
     edges_out = []
     for e in edges:
         row = {"s": index[e["a"]], "t": index[e["b"]], "type": e["type"]}
+        if e.get("note"):
+            row["note"] = e["note"]
         if e["series"]:
             row["series"] = e["series"]
         else:

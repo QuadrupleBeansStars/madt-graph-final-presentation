@@ -1,115 +1,118 @@
-# Graph Explorer — Offshore Leaks & Traffy Fondue
+# Who hands the complaint to whom? — Traffy Fondue as a graph
 
-An interactive, static web page (no build step, no dependencies) that draws two datasets
-as graphs: filter nodes, drag them, highlight neighbourhoods, find shortest paths, and
-scrub a **time slider** to watch the graph grow and change.
+Two static sites in one repo (no build step, no dependencies):
 
-| Dataset | Nodes | What the time slider shows |
+| | Path | What it is |
 |---|---|---|
-| **ICIJ Offshore Leaks** (global) | companies, officers, intermediaries, addresses | companies appearing at incorporation and disappearing at inactivation / strike-off |
-| **Traffy Fondue** (Bangkok) | districts, complaint categories, agencies (+ sampled tickets) | weekly ticket counts per edge — flood season, growth, a trailing "last N months" window; sampled tickets change colour reported → in progress → finished |
+| **Slides** | `/` (`index.html`) | A presentation: the problem, the data, the graph ideas, how it looks, what it shows, why a graph. Every graph on a slide is the real, live, draggable one. |
+| **Explorer** | `/explorer/` | The interactive viewer for classmates: filters, search, highlight, shortest path, drag-to-pin and a **time slider**. |
 
-> **The data checked into `data/` is synthetic demo data** (a banner says so in the app).
-> It is shaped like the real exports so the viewer and pipeline can be developed and
-> demoed offline. Replace it with the real data using the steps below.
+The Traffy Fondue graph is built from the ordered `organization` column — the list of
+agencies that handled each complaint — so each ticket becomes a **path** and 5,000
+tickets merge into one **agency handoff network**.
+
+> **Data status.** Traffy Fondue is the **real 5,000-ticket sample** (derived data only:
+> free text, photos, addresses and coordinates are never read). The Offshore Leaks tab in
+> the explorer is **synthetic demo data** (a banner says so). The sample is ~84% from the
+> last 90 days, so the time slider is only dense in recent months.
 
 ## Run locally
 
 ```bash
-python -m http.server 8000      # then open http://localhost:8000
+python -m http.server 8000     # slides: http://localhost:8000   explorer: http://localhost:8000/explorer/
 ```
-(ES modules and `fetch` need HTTP — opening `index.html` as a `file://` URL will not work.)
+(ES modules and `fetch` need HTTP; `file://` will not work.)
+
+Slides: `→`/`Space` next step · `←` back · `F` fullscreen · click or swipe also works.
 
 ## Deploy on GitHub Pages
 
-Settings → Pages → *Deploy from a branch* → `main` / `/ (root)`. Everything is static.
+Settings → Pages → *Deploy from a branch* → pick the branch (`graph-explorer`, or `main`
+after merging) and `/ (root)`. The slides are at the site root, the explorer at `/explorer/`.
 
-## Use the real data
+## Rebuild the Traffy graph from a new export
 
 Python 3.10+ with `pandas`, `numpy`, `networkx`, `scipy`.
 
-**1. Offshore Leaks** — download the CSV bulk archive from
-<https://offshoreleaks.icij.org/pages/database>, unzip, then:
-
 ```bash
-python pipeline/offshore_adapter.py --input path/to/csv_folder --country Thailand \
-       --max-nodes 4000 --out data/offshore.json
+python pipeline/traffy_handoff.py --input path/to/traffy_report.csv
+# writes data/traffy.json (graph for the viewer) and data/traffy_insights.json (numbers on the slides)
 ```
-The full database is millions of rows, so the adapter extracts a *slice*: everything
-linked to `--country` (names or ISO3 codes, comma-separated), one hop out, pruned to the
-best-connected `--max-nodes`. Options: `--source "Panama,Pandora"`, `--min-degree 2`.
 
-**2. Traffy Fondue** — export tickets as CSV / JSON / GeoJSON (BMA open data
-`data.bangkok.go.th`, or the Traffy Fondue public map). Then:
+Required columns: `ticket_id, type, organization, district, timestamp, state`. Optional and
+used if present: `organization_action, count_reopen, duration_minutes_total`.
 
-```bash
-python pipeline/traffy_adapter.py --input tickets.csv --out data/traffy.json \
-       --province-contains "กรุงเทพ|Bangkok" --sample 400
-```
-Column names vary between exports. The adapter matches common aliases (see `ALIASES` in
-the file) and prints the columns it picked; override any with
-`--col category=problem_type_fondue --col district=district_name`.
+What the adapter does
+- **Drops the root** "กรุงเทพมหานคร" (on ~98% of chains, no routing information).
+- **Folds district units** ("ฝ่ายโยธา เขตดินแดง") into one role ("ฝ่ายโยธา (เขต)"); district
+  offices stay as 50 District nodes.
+- Splits `type` on commas → one Category edge per tag.
+- **Nodes:** District office, Agency / unit (with `kind`), Category.
+  **Edges:** `handoff` (directed, neighbours in a chain) and `routed_to` (category → agency),
+  each with a weekly ticket series and a plain-text `note` ("226 tickets · median 1.2 d · 80% finished").
+- Completion rates only use tickets ≥ 30 days old (a young ticket cannot be finished yet).
+- Thresholds: `--min-agency 8 --min-handoff 3 --min-routed 4`.
 
-**3. Update `data/datasets.json`** if you rename files or add datasets (id, file, title, blurb).
+Things to know about the data: `state` takes the values `start, forward, inprogress, finish,
+follow, irrelevant` (`forward`/`follow` are not in the data dictionary — shown as-is);
+`organization` and `organization_action` differ on ~95% of rows, the adapter uses
+`organization` (participation order). Names are Thai; English glosses are in
+`pipeline/traffy_handoff.py` (`CAT_EN`, `AGENCY_EN`).
 
-> Both adapters were developed against the *documented* schemas and tested end-to-end on
-> the synthetic files from `pipeline/make_demo_data.py`. They have **not** been run on the
-> real downloads yet — check the printed column mapping and counts on the first real run.
+Offshore demo data: `python pipeline/make_demo_data.py`. Real ICIJ data:
+`python pipeline/offshore_adapter.py --input <csv folder> --country Thailand --max-nodes 4000`
+(untested on the real download — check the printed counts on first run).
 
-Regenerate the demo data any time with `python pipeline/make_demo_data.py`.
+## What the explorer does
 
-## What the viewer does
-
-- **Filters:** node types, edge types, minimum connections, community, and attribute
-  filters (country, jurisdiction, leak, status — defined per dataset in `meta.filters`).
-- **Appearance:** size by PageRank or by live connections in the current time view;
-  colour by node type, community (Louvain) or complaint state.
-- **Time:** slider with an activity histogram, play/pause, speed, *Cumulative* vs
-  *Active* views, trailing window for weighted edges, include/exclude undated items.
-- **Interaction:** drag nodes (they stay pinned; double-click releases), pan, zoom,
-  search, click for details and neighbours, shortest path between two nodes.
-- **Layout is computed once** and the slider only shows/hides items, so nodes never jump
-  while time moves. *Re-layout visible* re-flows whatever is currently shown.
+- **Filters:** node types, edge types, minimum connections, community, attribute filters
+  (e.g. *Agency kind*).
+- **Appearance:** size by PageRank or live connections; colour by type or community (Louvain).
+- **Time:** slider with an activity histogram, play/pause, speed, *Cumulative* vs *Active*
+  (trailing window) views.
+- **Interaction:** drag nodes (they stay pinned; double-click releases), pan, zoom, search,
+  click for details (edge stats, direction arrows), shortest path between two nodes.
+- The layout is computed once; the slider only shows/hides items, so nodes never jump.
 - Keyboard: `Space` play/pause · `←/→` step time · `Esc` clear.
 
 ## Plug in the Graph RAG module
 
-The page exposes `window.GraphViewer`, so retrieved subgraphs can be shown live:
+`window.GraphViewer` lets retrieved subgraphs be shown live next to an answer:
 
 ```js
 GraphViewer.loadDataset('traffy');
-GraphViewer.highlight(['D:Chatuchak', 'C:Flood', 'A:Drainage & Sewerage Dept.']); // ids = node.id in the JSON
-GraphViewer.select('D:Chatuchak');
-GraphViewer.setTime('2025-09-30');
+GraphViewer.highlight(['C:ผิดกฎจราจร', 'A:สำนักการโยธา กทม.']);   // ids = node.id in data/traffy.json
+GraphViewer.select('A:ร้องทุกข์ กทม. 1555');
+GraphViewer.setTime('2026-09-30');
 GraphViewer.clear();
 ```
-`highlight()` reveals hidden nodes (enables their type, moves time forward if needed) and
-dims everything else. The URL hash works too: `#d=offshore&sel=<nodeId>&t=2012-06-01&hl=id1,id2`.
+URL hash: `explorer/index.html#d=traffy&sel=<nodeId>&t=2026-09-01&hl=id1,id2`.
+Slides embed the same renderer through `explorer/js/embed.js` (`mount(canvas, rawJson, opts)`).
 
 ## Data format (`data/*.json`)
 
 ```jsonc
-{ "meta":  { "id", "title", "nodeTypes": {"Entity": {"label","color","hidden?"}}, "filters": [...],
-             "timeRange": [ms, ms], "series": {"t0","stepMs","n"}, "demo": true, ... },
-  "nodes": [{ "id","label","type","start","end","deg","pr","comm","attrs":{}, "phases":[[ms,"state"]] }],
-  "edges": [{ "s","t","type", "w","start","end" | "series": {"o": offset, "c": [counts...]} }] }
+{ "meta":  { "id", "title", "nodeTypes": {"Agency": {"label","color"}}, "filters": [{"key","label"}],
+             "directedEdges": ["handoff"], "timeRange": [ms, ms], "series": {"t0","stepMs","n"} },
+  "nodes": [{ "id","label","type","start","end","deg","pr","comm","attrs":{} }],
+  "edges": [{ "s","t","type","note?", "w","start","end" | "series": {"o": offset, "c": [counts...]} }] }
 ```
-All times are epoch milliseconds (UTC). `start`/`end` null on both = "undated".
-`deg`, `pr` (PageRank, normalised) and `comm` (Louvain) are computed in `pipeline/graphkit.py`.
+Times are epoch milliseconds (UTC). `deg`, `pr` (PageRank) and `comm` (Louvain) come from
+`pipeline/graphkit.py`. Edge direction is `s → t`.
 
-## Limits & notes
+## Limits
 
-- Canvas 2D rendering handles a few thousand nodes comfortably; keep slices under ~5–8k nodes.
-- **Offshore Leaks:** inclusion in the database does not imply wrongdoing. Data is ODbL,
-  contents CC BY-SA (check the current terms on the ICIJ site) — keep the attribution
-  and share derived data alike.
-- **Traffy Fondue:** the pipeline aggregates and never uses free text, photos or contact
-  details. Check the data provider's terms before publishing real data.
+- A 5,000-ticket sample; completion rates for long chains rest on a few hundred tickets.
+- Correlations (longer chain ↔ lower completion) are not causes.
+- Canvas 2D handles a few thousand nodes; keep slices under ~5–8k.
+- Traffy data: check the provider's terms before publishing larger real extracts.
+  Offshore Leaks: inclusion does not imply wrongdoing; data is ODbL / CC BY-SA.
 
 ## Layout
 
 ```
-index.html  css/style.css  js/{app,graph,layout,render,theme}.js
-data/       datasets.json, offshore.json, traffy.json   (demo data)
-pipeline/   graphkit.py, offshore_adapter.py, traffy_adapter.py, make_demo_data.py
+index.html  deck/{deck.css,deck.js}                      slides
+explorer/   index.html, css/, js/{app,graph,layout,render,theme,embed}.js
+data/       datasets.json, traffy.json, traffy_insights.json, offshore.json (demo)
+pipeline/   graphkit.py, traffy_handoff.py, offshore_adapter.py, make_demo_data.py
 ```

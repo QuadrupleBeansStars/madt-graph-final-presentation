@@ -1,14 +1,14 @@
 [
   {
-    "id": "offshore",
-    "file": "data/offshore.json",
-    "title": "Offshore Leaks",
-    "blurb": "Companies, people & intermediaries"
-  },
-  {
     "id": "traffy",
     "file": "data/traffy.json",
     "title": "Traffy Fondue",
-    "blurb": "Bangkok complaints by district"
+    "blurb": "Who hands Bangkok complaints to whom (real 5,000-ticket sample)"
+  },
+  {
+    "id": "offshore",
+    "file": "data/offshore.json",
+    "title": "Offshore Leaks (demo)",
+    "blurb": "Synthetic demo: companies, people & intermediaries"
   }
 ]
