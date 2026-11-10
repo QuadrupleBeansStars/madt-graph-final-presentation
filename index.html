@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Graph Explorer — Offshore Leaks &amp; Traffy Fondue</title>
+  <meta name="description" content="Interactive graph explorer with filters, highlight, drag and a time slider.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%278%27 cy=%2716%27 r=%274%27 fill=%27%233987e5%27/%3E%3Ccircle cx=%2724%27 cy=%278%27 r=%274%27 fill=%27%23d95926%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%274%27 fill=%27%23199e70%27/%3E%3Cpath d=%27M8 16L24 8M8 16L24 24%27 stroke=%27%238e8d86%27 stroke-width=%272%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <aside id="side" aria-label="Controls">
+    <header class="head">
+      <h1>Graph Explorer</h1>
+      <div id="tabs" role="tablist" aria-label="Dataset"></div>
+      <p id="subtitle" class="muted"></p>
+      <div id="demoBanner" class="banner" hidden></div>
+    </header>
+
+    <section>
+      <h2>Find</h2>
+      <input id="search" type="search" placeholder="Search by name…" autocomplete="off" aria-label="Search nodes">
+      <ul id="results" class="results" hidden></ul>
+    </section>
+
+    <section>
+      <h2>Node types</h2>
+      <div id="nodeTypes" class="checks"></div>
+      <h2 class="sub">Edge types</h2>
+      <div id="edgeTypes" class="checks"></div>
+    </section>
+
+    <section>
+      <h2>Filters</h2>
+      <label class="row"><span>Min connections <b id="minDegVal">0</b></span>
+        <input id="minDeg" type="range" min="0" max="10" value="0"></label>
+      <label class="row"><span>Community</span><select id="commSel"></select></label>
+      <div id="attrFilters"></div>
+    </section>
+
+    <section>
+      <h2>Appearance</h2>
+      <label class="row"><span>Size by</span>
+        <select id="sizeBy">
+          <option value="pagerank">PageRank (importance)</option>
+          <option value="live">Connections in current time view</option>
+          <option value="uniform">Uniform</option>
+        </select></label>
+      <label class="row"><span>Color by</span>
+        <select id="colorBy">
+          <option value="type">Node type</option>
+          <option value="community">Community (Louvain)</option>
+          <option value="state">Complaint state</option>
+        </select></label>
+      <label class="check"><input id="labelsOn" type="checkbox" checked> Show labels</label>
+      <label class="check"><input id="hideIso" type="checkbox"> Hide nodes with no visible connections</label>
+    </section>
+
+    <section>
+      <h2>Tools</h2>
+      <div class="btns">
+        <button id="btnPath" class="btn" aria-pressed="false">Shortest path</button>
+        <button id="btnFit" class="btn">Fit view</button>
+        <button id="btnRelayout" class="btn" title="Re-run the layout on what is currently visible">Re-layout visible</button>
+        <button id="btnReset" class="btn" title="Re-run the layout from scratch">Reset layout</button>
+        <button id="btnPng" class="btn">Save PNG</button>
+      </div>
+      <p id="pathHint" class="hint" hidden></p>
+      <p class="hint">Drag a node to move it (it stays pinned) · double-click a node to pin / release it · scroll to zoom · <kbd>Esc</kbd> clears · <kbd>Space</kbd> plays.</p>
+    </section>
+
+    <footer class="foot">
+      <p id="source" class="muted small"></p>
+    </footer>
+  </aside>
+
+  <main id="main">
+    <div id="stage">
+      <canvas id="cv" aria-label="Network graph" role="img"></canvas>
+      <div id="stats" class="overlay stats" aria-live="polite"></div>
+      <div id="legend" class="overlay legend" hidden></div>
+      <div id="details" class="overlay details" hidden></div>
+      <div id="tip" class="tip" hidden></div>
+      <div id="toast" class="toast" hidden></div>
+      <div id="loading" class="loading">Loading…</div>
+    </div>
+
+    <div id="timebar" class="timebar">
+      <div class="trow">
+        <button id="btnPlay" class="play" aria-label="Play">▶</button>
+        <select id="speed" aria-label="Speed">
+          <option value="0.5">0.5×</option><option value="1" selected>1×</option>
+          <option value="2">2×</option><option value="4">4×</option>
+        </select>
+        <div id="timeLabel" class="timelabel">—</div>
+        <div class="spacer"></div>
+        <label class="inline"><span>Time view</span>
+          <select id="mode">
+            <option value="cumulative">Cumulative (everything so far)</option>
+            <option value="active">Active (lifespan / recent window)</option>
+          </select></label>
+        <label class="inline" id="winWrap" hidden><span>Window</span>
+          <select id="win">
+            <option value="28">4 weeks</option><option value="90">3 months</option>
+            <option value="180">6 months</option><option value="365">1 year</option>
+          </select></label>
+        <label class="check inline"><input id="undated" type="checkbox" checked> Include undated</label>
+      </div>
+      <div class="slidewrap">
+        <canvas id="hist" aria-hidden="true"></canvas>
+        <input id="slider" type="range" min="0" max="1000" value="1000" aria-label="Time">
+      </div>
+      <div class="trow ends"><span id="tMin" class="muted small"></span><span id="timeNote" class="muted small center"></span><span id="tMax" class="muted small"></span></div>
+    </div>
+  </main>
+</div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

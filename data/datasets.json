@@ -1,0 +1,14 @@
+[
+  {
+    "id": "offshore",
+    "file": "data/offshore.json",
+    "title": "Offshore Leaks",
+    "blurb": "Companies, people & intermediaries"
+  },
+  {
+    "id": "traffy",
+    "file": "data/traffy.json",
+    "title": "Traffy Fondue",
+    "blurb": "Bangkok complaints by district"
+  }
+]
