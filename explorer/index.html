@@ -3,16 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Graph Explorer — Offshore Leaks &amp; Traffy Fondue</title>
-  <meta name="description" content="Interactive graph explorer with filters, highlight, drag and a time slider.">
+  <title>Traffy Fondue Graph Explorer</title>
+  <meta name="description" content="Interactive graph of who hands Bangkok Traffy Fondue complaints to whom: filters, paths, highlight and a time slider.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%278%27 cy=%2716%27 r=%274%27 fill=%27%233987e5%27/%3E%3Ccircle cx=%2724%27 cy=%278%27 r=%274%27 fill=%27%23d95926%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%274%27 fill=%27%23199e70%27/%3E%3Cpath d=%27M8 16L24 8M8 16L24 24%27 stroke=%27%238e8d86%27 stroke-width=%272%27/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="app">
+  <div id="mbar"><b>Traffy graph</b><button id="btnDrawer" class="btn">Search &amp; filters</button></div>
   <aside id="side" aria-label="Controls">
     <header class="head">
-      <h1>Graph Explorer</h1>
+      <button id="btnCloseDrawer" class="x" aria-label="Close">×</button>
+      <h1>Traffy Fondue Graph Explorer</h1>
       <div id="tabs" role="tablist" aria-label="Dataset"></div>
       <p id="subtitle" class="muted"></p>
       <div id="demoBanner" class="banner" hidden></div>

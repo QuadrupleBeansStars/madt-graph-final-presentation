@@ -3,12 +3,6 @@
     "id": "traffy",
     "file": "data/traffy.json",
     "title": "Traffy Fondue",
-    "blurb": "Who hands Bangkok complaints to whom (real 5,000-ticket sample)"
-  },
-  {
-    "id": "offshore",
-    "file": "data/offshore.json",
-    "title": "Offshore Leaks (demo)",
-    "blurb": "Synthetic demo: companies, people & intermediaries"
+    "blurb": "Who hands Bangkok complaints to whom (1.3 million real tickets, Jan 2023 – Oct 2026)"
   }
 ]

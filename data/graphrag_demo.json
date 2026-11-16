@@ -1,0 +1,161 @@
+{
+ "index_rows": 250000,
+ "questions": [
+  {
+   "id": "q1",
+   "question": "Why do traffic-violation complaints stall?",
+   "question_th": "ทำไมเรื่องร้องเรียนผิดกฎจราจรถึงค้าง",
+   "highlight": [
+    "A:กองบังคับการตำรวจนครบาล 2 (บก.น.2)",
+    "A:กองบังคับการตำรวจนครบาล 5 (บก.น.5)",
+    "A:กองบัญชาการตำรวจนครบาล (บช.น.)",
+    "A:ฝ่ายเทศกิจ (เขต)",
+    "A:สน.ลุมพินี",
+    "A:สำนักงานตำรวจแห่งชาติ (Royal Thai Police)",
+    "A:เพื่อนชัชชาติ",
+    "C:ผิดกฎจราจร"
+   ],
+   "facts": [
+    "ผิดกฎจราจร · Traffic violation: 103,507 tickets, reaches 589 different agencies, average chain 4.1 agencies, 54% finished within 90 days, median 3.1 days.",
+    "ผิดกฎจราจร · Traffic violation —routed_to→ สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police: 60,964 tickets; this agency finishes 41% within 90 days.",
+    "กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police —handoff→ สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police: 132,118 tickets · median 5.4 d · 40% finished.",
+    "ผิดกฎจราจร · Traffic violation —routed_to→ กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police: 60,962 tickets; this agency finishes 41% within 90 days.",
+    "สน.ลุมพินี —handoff→ กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police: 6,390 tickets · median 11.8 d · 49% finished.",
+    "ผิดกฎจราจร · Traffic violation —routed_to→ ฝ่ายเทศกิจ (เขต) · District enforcement: 30,277 tickets; this agency finishes 91% within 90 days.",
+    "เพื่อนชัชชาติ —handoff→ ฝ่ายเทศกิจ (เขต) · District enforcement: 19,201 tickets · median 2.4 d · 94% finished.",
+    "ผิดกฎจราจร · Traffic violation —routed_to→ กองบังคับการตำรวจนครบาล 5 (บก.น.5): 16,607 tickets; this agency finishes 31% within 90 days.",
+    "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police —handoff→ กองบังคับการตำรวจนครบาล 5 (บก.น.5): 24,099 tickets · median 15.0 d · 28% finished.",
+    "ผิดกฎจราจร · Traffic violation —routed_to→ กองบังคับการตำรวจนครบาล 2 (บก.น.2): 11,610 tickets; this agency finishes 51% within 90 days.",
+    "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police —handoff→ กองบังคับการตำรวจนครบาล 2 (บก.น.2): 20,857 tickets · median 3.8 d · 52% finished."
+   ],
+   "answer": "Because many of them leave the city administration for the police. Of 103,507 traffic-violation tickets, the two biggest routes go to the Royal Thai Police (60,964) and the Metropolitan Police (60,962); both finish only 41% within 90 days, and Division 5 only 31% (the Royal Thai Police → Division 5 handoff alone is 24,099 tickets with a median of 15.0 days). The same category routed to district enforcement finishes 91%. The stall sits at the police end of the chain, not at the district.",
+   "plain_rows": [
+    {
+     "ticket_id": "UZ9XHL",
+     "type": "เรื่องร้องทุกข์ประเภทอื่น ๆ - เรื่องร้องเรียนที่ไม่สามารถจัดเข้าประเภทใด",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตบางแค",
+     "state": "เสร็จสิ้น",
+     "district": "บางแค",
+     "score": 0.291
+    },
+    {
+     "ticket_id": "2023-EECPDX",
+     "type": "เรื่องร้องทุกข์ประเภทอื่น ๆ - เรื่องร้องเรียนที่ไม่สามารถจัดเข้าประเภทใด",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตบางเขน",
+     "state": "เสร็จสิ้น",
+     "district": "บางเขน",
+     "score": 0.291
+    },
+    {
+     "ticket_id": "DHMMXL",
+     "type": "เรื่องร้องทุกข์ประเภทอื่น ๆ - เรื่องร้องเรียนที่ไม่สามารถจัดเข้าประเภทใด",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตบางเขน",
+     "state": "เสร็จสิ้น",
+     "district": "บางเขน",
+     "score": 0.291
+    }
+   ]
+  },
+  {
+   "id": "q2",
+   "question": "If Metropolitan Police Division 5 stops closing tickets, which districts feel it?",
+   "question_th": "กองบังคับการตำรวจนครบาล 5 ไม่ปิดเรื่อง เขตไหนได้รับผลกระทบ",
+   "highlight": [
+    "A:กองบังคับการตำรวจนครบาล 5 (บก.น.5)",
+    "A:กองบัญชาการตำรวจนครบาล (บช.น.)",
+    "A:สำนักงานตำรวจแห่งชาติ (Royal Thai Police)",
+    "A:เพื่อนชัชชาติ",
+    "D:คลองเตย",
+    "D:ตลิ่งชัน",
+    "D:บางบอน",
+    "D:บางพลัด",
+    "D:หนองจอก"
+   ],
+   "facts": [
+    "กองบังคับการตำรวจนครบาล 5 (บก.น.5): 33,065 tickets, 31% finished within 90 days, median 13 days.",
+    "Path เขตคลองเตย → กองบังคับการตำรวจนครบาล 5 (บก.น.5) (weakest link 4,637 tickets).",
+    "Path เขตบางพลัด → เพื่อนชัชชาติ → เขตคลองเตย → กองบังคับการตำรวจนครบาล 5 (บก.น.5) (weakest link 2,583 tickets).",
+    "Path เขตหนองจอก → เพื่อนชัชชาติ → เขตคลองเตย → กองบังคับการตำรวจนครบาล 5 (บก.น.5) (weakest link 1,887 tickets).",
+    "Path เขตบางบอน → กองบัญชาการตำรวจนครบาล (บช.น.) → สำนักงานตำรวจแห่งชาติ (Royal Thai Police) → กองบังคับการตำรวจนครบาล 5 (บก.น.5) (weakest link 1,361 tickets).",
+    "Path เขตตลิ่งชัน → สำนักงานตำรวจแห่งชาติ (Royal Thai Police) → กองบังคับการตำรวจนครบาล 5 (บก.น.5) (weakest link 1,245 tickets)."
+   ],
+   "answer": "Division 5 closes 31% of its tickets within 90 days (median 13 days), and 50 district offices reach it within four hops. The heaviest feeders are Khlong Toei (direct), Bang Phlat, Nong Chok (through the เพื่อนชัชชาติ, “Chadchart’s friends”, node), and Bang Bon, Taling Chan (via the Royal Thai Police). If the division stops closing tickets, those districts' complaints are the first to pile up.",
+   "plain_rows": [
+    {
+     "ticket_id": "2LKHXM",
+     "type": "ปัญหาที่ส่งผลกระทบกับการจราจร",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตบางนา, สน.บางนา, กองบัญชาการตำรวจนครบาล (บช.น.), สำนักงานตำรวจแห่งชาติ (Royal Thai Police), กองบังคับการตำรวจนครบาล 5 (บก.น.5)",
+     "state": "กำลังดำเนินการ",
+     "district": "บางนา",
+     "score": 0.349
+    },
+    {
+     "ticket_id": "M3TEYP",
+     "type": "ปัญหาที่ส่งผลกระทบกับการจราจร",
+     "organization": "ร้องทุกข์ กทม. 1555, เพื่อนชัชชาติ, กรุงเทพมหานคร, เขตวัฒนา, สน.พระโขนง, กองบัญชาการตำรวจนครบาล (บช.น.), สำนักงานตำรวจแห่งชาติ (Royal Thai Police), กองบังคับการตำรวจนครบาล 5 (บก.น.5)",
+     "state": "เสร็จสิ้น",
+     "district": "วัฒนา",
+     "score": 0.344
+    },
+    {
+     "ticket_id": "MEKF7B",
+     "type": "ปัญหาที่ส่งผลกระทบกับการจราจร",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตวัฒนา, สน.พระโขนง, กองบัญชาการตำรวจนครบาล (บช.น.), สำนักงานตำรวจแห่งชาติ (Royal Thai Police), กองบังคับการตำรวจนครบาล 5 (บก.น.5)",
+     "state": "กำลังดำเนินการ",
+     "district": "วัฒนา",
+     "score": 0.344
+    }
+   ]
+  },
+  {
+   "id": "q3",
+   "question": "Which pairs of agencies pass tickets back and forth?",
+   "question_th": "หน่วยงานที่ส่งเรื่องกลับไปกลับมาระหว่างกัน",
+   "highlight": [
+    "A:Bangkok Smart Lighting (สำนักการโยธา กทม.)",
+    "A:การไฟฟ้านครหลวง (เขต)",
+    "A:การไฟฟ้านครหลวง MEA",
+    "A:ศูนย์เครื่องมือกล ส่วนก่อสร้างและบูรณะ 1 สำนักงานก่อสร้างและบูรณะ (สกบ.สนย.)",
+    "A:สำนักการโยธา กทม.",
+    "A:สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สนย.) กทม.",
+    "A:เพื่อนชัชชาติ",
+    "D:จตุจักร"
+   ],
+   "facts": [
+    "108 of 958 handoff edges have a reverse edge (A→B and B→A both exist).",
+    "สำนักการโยธา —handoff→ สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน…: 80,426 tickets · median 5.1 d · 48% finished; reverse สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… —handoff→ สำนักการโยธา: 45,502 tickets · median 4.2 d · 53% finished.",
+    "การไฟฟ้านครหลวง (เขต) —handoff→ การไฟฟ้านครหลวง MEA: 31,980 tickets · median 17.1 d · 53% finished; reverse การไฟฟ้านครหลวง MEA —handoff→ การไฟฟ้านครหลวง (เขต): 25,575 tickets · median 16.8 d · 35% finished.",
+    "Bangkok Smart Lighting (สำนักการโยธา) —handoff→ สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน…: 35,351 tickets · median 5.0 d · 53% finished; reverse สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… —handoff→ Bangkok Smart Lighting (สำนักการโยธา): 14,121 tickets · median 7.0 d · 65% finished.",
+    "Bangkok Smart Lighting (สำนักการโยธา) —handoff→ ศูนย์เครื่องมือกล ส่วนก่อสร้างและบูรณะ 1 สำนั…: 8,033 tickets · median 6.9 d · 70% finished; reverse ศูนย์เครื่องมือกล ส่วนก่อสร้างและบูรณะ 1 สำนั… —handoff→ Bangkok Smart Lighting (สำนักการโยธา): 9,227 tickets · median 18.8 d · 41% finished.",
+    "เพื่อนชัชชาติ —handoff→ เขตจตุจักร: 10,992 tickets · median 7.6 d · 68% finished; reverse เขตจตุจักร —handoff→ เพื่อนชัชชาติ: 6,680 tickets · median 5.8 d · 70% finished."
+   ],
+   "answer": "108 of the 958 handoff edges run in both directions. The heaviest pair is Public Works Dept ⇄ Construction & Repair Office: 80,426 tickets one way and 45,502 back. Next is การไฟฟ้านครหลวง (เขต) · Metropolitan Electricity Authority ⇄ การไฟฟ้านครหลวง MEA · Metropolitan Electricity Authority (31,980 / 25,575), where the returning leg finishes only 35%. Two edges in opposite directions come from different tickets, so this shows unclear ownership rather than one ticket bouncing.",
+   "plain_rows": [
+    {
+     "ticket_id": "2026-L8ALBJ",
+     "type": "บริการสาธารณะของหน่วยงานในสังกัดกรุงเทพมหานคร",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตดอนเมือง",
+     "state": "รอรับเรื่อง",
+     "district": "ดอนเมือง",
+     "score": 0.203
+    },
+    {
+     "ticket_id": "N9E7RJ",
+     "type": "บริการสาธารณะของหน่วยงานในสังกัดกรุงเทพมหานคร",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตบางเขน",
+     "state": "เสร็จสิ้น",
+     "district": "บางเขน",
+     "score": 0.199
+    },
+    {
+     "ticket_id": "7846YB",
+     "type": "บริการสาธารณะของหน่วยงานในสังกัดกรุงเทพมหานคร",
+     "organization": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตบางเขน",
+     "state": "เสร็จสิ้น",
+     "district": "บางเขน",
+     "score": 0.199
+    }
+   ]
+  }
+ ]
+}

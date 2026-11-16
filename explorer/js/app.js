@@ -301,7 +301,7 @@ function onSearch() {
   recomputeFocus(); view.invalidate();
 }
 function pickResult(i) {
-  $('results').hidden = true; $('search').value = ''; S.matches = null;
+  $('results').hidden = true; $('search').value = ''; S.matches = null; document.body.classList.remove('drawer');
   selectNode(i, { center: true, ensure: true });
 }
 
@@ -478,6 +478,8 @@ function frame(now) {
 function wire() {
   $('slider').addEventListener('input', (e) => { S.f = +e.target.value / 1000; S.playing = false; requestRefresh(); });
   $('btnPlay').addEventListener('click', togglePlay);
+  $('btnDrawer').addEventListener('click', () => document.body.classList.add('drawer'));
+  $('btnCloseDrawer').addEventListener('click', () => document.body.classList.remove('drawer'));
   $('speed').addEventListener('change', (e) => { S.speed = +e.target.value; });
   $('mode').addEventListener('change', (e) => { S.mode = e.target.value; requestRefresh(); });
   $('win').addEventListener('change', (e) => { S.windowDays = +e.target.value; requestRefresh(); });
@@ -570,6 +572,7 @@ async function boot() {
   $('tabs').replaceChildren(...manifest.map((d) => h('button', {
     role: 'tab', 'data-id': d.id, 'aria-selected': 'false', onclick: () => loadDataset(d.id),
   }, h('b', {}, d.title), h('span', {}, d.blurb || ''))));
+  if (manifest.length < 2) $('tabs').style.display = 'none';
   const hash = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
   await loadDataset(hash.d || manifest[0].id, hash);
   requestAnimationFrame(frame);

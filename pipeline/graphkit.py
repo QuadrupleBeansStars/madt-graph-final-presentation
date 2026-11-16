@@ -1,6 +1,6 @@
 """graphkit - build a typed, time-aware graph and export it as viewer JSON.
 
-Both dataset adapters (Offshore Leaks, Traffy Fondue) feed a ``GraphBuilder``;
+The Traffy Fondue adapter feeds a ``GraphBuilder``;
 ``export`` then computes the graph analysis the viewer shows (degree, PageRank,
 Louvain communities) and writes one compact JSON file that the static web page
 loads directly.

@@ -2,3 +2,5 @@ pipeline/sample/
 __pycache__/
 *.pyc
 .DS_Store
+data/bangkok_*.csv.gz
+lectures/

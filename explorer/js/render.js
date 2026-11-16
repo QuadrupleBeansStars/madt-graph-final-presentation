@@ -3,6 +3,7 @@ import { THEME } from './theme.js';
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
+const COARSE = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
 export class GraphView {
   constructor(canvas, hooks) {
     this.cv = canvas;
@@ -113,7 +114,7 @@ export class GraphView {
     for (let i = 0; i < m.n; i++) {
       if (!m.vis[i]) continue;
       const [x, y] = this.w2s(L.x[i], L.y[i]);
-      const r = this.screenR(i) + 3;
+      const r = this.screenR(i) + (COARSE ? 10 : 3);
       const d = (x - mx) ** 2 + (y - my) ** 2;
       if (d <= r * r && d < bd) { bd = d; best = i; }
     }
@@ -302,13 +303,29 @@ export class GraphView {
       cv.setPointerCapture(e.pointerId);
       this.hooks.onUser && this.hooks.onUser();
       const [x, y] = this._local(e);
+      this.ptrs = this.ptrs || new Map(); this.ptrs.set(e.pointerId, [x, y]);
+      if (this.ptrs.size === 2) { // second finger: switch to pinch
+        const [a, b] = [...this.ptrs.values()];
+        this.pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, k: this.cam.k };
+        this.drag = null; return;
+      }
       const hit = this.pick(x, y);
-      this.drag = { kind: hit >= 0 ? 'node' : 'pan', i: hit, x0: x, y0: y, moved: false, cx: this.cam.x, cy: this.cam.y };
+      const touch = e.pointerType === 'touch'; // on touch a drag always pans; a tap selects
+      this.drag = { kind: hit >= 0 && !touch ? 'node' : 'pan', i: hit, x0: x, y0: y, moved: false, cx: this.cam.x, cy: this.cam.y };
       this.tween = null;
     });
     cv.addEventListener('pointermove', (e) => {
       if (!this.model) return;
       const [x, y] = this._local(e);
+      if (this.ptrs && this.ptrs.has(e.pointerId)) this.ptrs.set(e.pointerId, [x, y]);
+      if (this.pinch && this.ptrs.size >= 2) {
+        const [a, b] = [...this.ptrs.values()];
+        const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+        const [wx, wy] = this.s2w(mx, my);
+        const nk = clamp(this.pinch.k * (Math.hypot(a[0] - b[0], a[1] - b[1]) / this.pinch.d), 0.02, 25);
+        this.cam.k = nk; this.cam.x = wx - (mx - this.w / 2) / nk; this.cam.y = wy - (my - this.h / 2) / nk;
+        this.tween = null; this.invalidate(); return;
+      }
       const d = this.drag;
       if (d) {
         if (Math.hypot(x - d.x0, y - d.y0) > 3) d.moved = true;
@@ -327,17 +344,19 @@ export class GraphView {
       if (hit !== this.hover) { this.hover = hit; cv.style.cursor = hit >= 0 ? 'pointer' : 'grab'; this.invalidate(); }
       this.hooks.onHover(hit, e.clientX, e.clientY);
     });
-    const up = () => {
+    const up = (e) => {
+      if (this.ptrs) this.ptrs.delete(e.pointerId);
+      if (this.pinch) { if (!this.ptrs || this.ptrs.size < 2) this.pinch = null; this.drag = null; return; }
       const d = this.drag; this.drag = null;
       if (!d) return;
       if (d.kind === 'node') {
         this.layout.pinned[d.i] = 0;
         if (d.moved) { this.layout.fixed[d.i] = 1; this.invalidate(); } // dropped nodes stay put
         else this.hooks.onSelect(d.i);
-      } else if (!d.moved) this.hooks.onSelect(-1);
+      } else if (!d.moved) this.hooks.onSelect(d.i >= 0 ? d.i : -1);
     };
     cv.addEventListener('pointerup', up);
-    cv.addEventListener('pointercancel', () => { this.drag = null; });
+    cv.addEventListener('pointercancel', (e) => { this.drag = null; this.pinch = null; if (this.ptrs) this.ptrs.delete(e.pointerId); });
     cv.addEventListener('pointerleave', () => {
       if (!this.drag && this.hover !== -1) { this.hover = -1; this.hooks.onHover(-1, 0, 0); this.invalidate(); }
     });

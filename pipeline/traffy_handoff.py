@@ -79,6 +79,10 @@ AGENCY_EN = [
     ("ฝ่ายการคลัง", "District finance"), ("ฝ่ายการศึกษา", "District education"),
     ("ฝ่ายรายได้", "District revenue"), ("ฝ่ายทะเบียน", "District registration"),
     ("การไฟฟ้านครหลวง", "Metropolitan Electricity Authority"), ("การประปานครหลวง", "Metropolitan Waterworks"),
+    ("การรถไฟแห่งประเทศไทย", "State Railway of Thailand"), ("กรมการขนส่งทางบก", "Land Transport Dept"),
+    ("การทางพิเศษแห่งประเทศไทย", "Expressway Authority"), ("กรมทางหลวง", "Dept of Highways"),
+    ("แขวงทางหลวง", "Highways district office"), ("สำนักงาน กสทช. (สายสื่อสาร)", "NBTC · telecom cables"),
+    ("สำนักงาน กสทช. (ศูนย์รับแจ้งปัญหา 1200)", "NBTC · hotline 1200"), ("สำนักงาน กสทช.", "NBTC · telecom regulator"),
 ]
 
 
@@ -151,7 +155,9 @@ def load_tickets(paths) -> pd.DataFrame:
     files = []
     for p in ([paths] if isinstance(paths, str) else paths):
         files += sorted(glob.glob(p)) or [p]
-    frames = [pd.read_csv(f, low_memory=False) for f in files]
+    keep = {"ticket_id", "type", "organization", "district", "timestamp", "state", "last_activity",
+            "duration_minutes_total", "duration_minutes_finished", "count_reopen", "star"}   # never load comments / photos / addresses
+    frames = [pd.read_csv(f, usecols=lambda c: c in keep, low_memory=False) for f in files]
     df = pd.concat(frames, ignore_index=True)
     print(f"  files: {len(files)}  rows: {len(df):,}")
     if "state" in df:
@@ -176,8 +182,12 @@ def _days(mins):
     return None if pd.isna(mins) else float(mins) / 1440.0
 
 
-def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, min_routed=4):
-    df = load_tickets(inp)
+FIN_DAYS = 90   # "finished" = status finished AND closed within 90 days of creation
+MIN_AGE_D = 120  # only tickets old enough for that to be fair are used in finish rates
+
+
+def prepare(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean a raw export into one row per ticket with an ordered, normalised agency chain."""
     need = ["ticket_id", "type", "organization", "district", "timestamp", "state"]
     miss = [c for c in need if c not in df.columns]
     if miss:
@@ -205,9 +215,15 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
     df = df[df["L"] > 0].copy()
     df["tags"] = df["type"].map(split_tags)
     df["dur_d"] = df.get("duration_minutes_total", pd.Series(np.nan, index=df.index)).map(_days)
-    df["fin"] = (df["state"] == "finish")
+    df["fin"] = (df["state"] == "finish") & (df["dur_d"] <= FIN_DAYS)
     now_ms = int(df["ts_ms"].max())
     df["age_d"] = (now_ms - df["ts_ms"]) / DAY_MS
+    return df
+
+
+def build(inp, out, insights_out, bucket_days=7, min_agency=1000, min_handoff=500, min_routed=800):
+    df = prepare(load_tickets(inp))
+    now_ms = int(df["ts_ms"].max())
 
     step = bucket_days * DAY_MS
     t0 = int(df["ts_ms"].min() // DAY_MS * DAY_MS)
@@ -242,7 +258,7 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
 
     def stats(pos):
         sub = rows.iloc[pos]
-        old = sub[sub["age_d"] >= 30]
+        old = sub[sub["age_d"] >= MIN_AGE_D]
         return {
             "tickets": len(sub),
             "median_days": None if sub["dur_d"].notna().sum() < 3 else round(float(sub["dur_d"].median()), 1),
@@ -264,7 +280,7 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
         pos = node_t[n]
         s = stats(pos)
         attrs = {"tickets": f"{s['tickets']:,}", "median_days_total": s["median_days"],
-                 "finished_pct_(tickets_30d+)": s["finished_pct"], "avg_chain_length": s["avg_chain"]}
+                 "finished_90d_pct": s["finished_pct"], "avg_chain_length": s["avg_chain"]}
         if k == "D":
             gb.add_node(n, "เขต" + v, "District", start=first_seen(pos), attrs=attrs)
         else:
@@ -273,7 +289,7 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
             attrs.update({"kind": agency_kind(v), "full_name": v, "english": en})
             gb.add_node(n, label, "Agency", start=first_seen(pos), attrs=attrs)
     for t, pos in cat_t.items():
-        if len(pos) < 5:
+        if len(pos) < min_routed:   # a category below the routing threshold would be an isolated node
             continue
         s = stats(pos)
         en = CAT_EN.get(t)
@@ -281,13 +297,13 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
         gb.add_node(nid("C", t), f"{t} · {en}" if en else t, "Category", start=first_seen(pos),
                     attrs={"tickets": f"{s['tickets']:,}", "distinct_agencies": agencies,
                            "avg_chain_length": s["avg_chain"], "median_days_total": s["median_days"],
-                           "finished_pct_(tickets_30d+)": s["finished_pct"], "english": en})
+                           "finished_90d_pct": s["finished_pct"], "english": en})
 
     handoffs = []
     for (a, b), pos in pair_t.items():
         if a in keep and b in keep and len(pos) >= min_handoff:
             s = stats(pos)
-            note = f"{s['tickets']} tickets"
+            note = f"{s['tickets']:,} tickets"
             if s["median_days"] is not None:
                 note += f" · median {s['median_days']} d"
             if s["finished_pct"] is not None:
@@ -300,7 +316,7 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
         if cn in gb.nodes and a in keep_agency and len(pos) >= min_routed:
             s = stats(pos)
             gb.add_edge(cn, a, "routed_to", series=series_for(pos))
-            gb.edges[-1]["note"] = f"{s['tickets']} tickets"
+            gb.edges[-1]["note"] = f"{s['tickets']:,} tickets"
 
     meta = {
         "id": "traffy",
@@ -311,8 +327,8 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
         "filters": [{"key": "kind", "label": "Agency kind"}],
         "directedEdges": ["handoff"],
         "timeNote": ("Edge width = tickets in the window, by ticket creation week. 'Cumulative' = everything so "
-                     "far; 'Active' = trailing window. The sample is dense only in the last ~3 months."),
-        "source": ("Bangkok Metropolitan Administration / Traffy Fondue open data (5,000-ticket sample). "
+                     "far; 'Active' = trailing window (28 days by default)."),
+        "source": ("Bangkok Metropolitan Administration / Traffy Fondue open data, monthly exports Jan 2023 - Oct 2026. "
                    "Free text, photos, addresses and coordinates are not used."),
         "windowDays": 28, "defaultMode": "cumulative", "defaultSize": "pagerank",
     }
@@ -335,7 +351,7 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
         if "organization_action" in rows else None)
     by_len = []
     for L, g in rows.groupby(rows["L"].clip(upper=6)):
-        old = g[g["age_d"] >= 30]
+        old = g[g["age_d"] >= MIN_AGE_D]
         by_len.append({"len": int(L), "label": f"{int(L)}" if L < 6 else "6+", "tickets": int(len(g)),
                        "median_days": None if g["dur_d"].notna().sum() < 5 else round(float(g["dur_d"].median()), 1),
                        "finished_pct": None if len(old) < 10 else round(100 * float(old["fin"].mean())),
@@ -343,7 +359,7 @@ def build(inp, out, insights_out, bucket_days=7, min_agency=8, min_handoff=3, mi
     ins["by_chain_length"] = by_len
     ins["short_vs_long"] = {}
     for name, mask in (("short(<=3)", rows["L"] <= 3), ("long(>=5)", rows["L"] >= 5)):
-        g = rows[mask]; old = g[g["age_d"] >= 30]
+        g = rows[mask]; old = g[g["age_d"] >= MIN_AGE_D]
         ins["short_vs_long"][name] = {
             "tickets": int(len(g)), "median_days": _med(g),
             "finished_pct": _pct(old), "n_old": int(len(old))}
@@ -407,9 +423,9 @@ def main(argv=None):
     ap.add_argument("--input", required=True, nargs="+", help="one or more CSVs / globs, e.g. data/bangkok_*.csv")
     ap.add_argument("--out", default="data/traffy.json")
     ap.add_argument("--insights", default="data/traffy_insights.json")
-    ap.add_argument("--min-agency", type=int, default=8)
-    ap.add_argument("--min-handoff", type=int, default=3)
-    ap.add_argument("--min-routed", type=int, default=4)
+    ap.add_argument("--min-agency", type=int, default=1000)
+    ap.add_argument("--min-handoff", type=int, default=500)
+    ap.add_argument("--min-routed", type=int, default=800)
     a = ap.parse_args(argv)
     print("  wrote", a.out, build(a.input, a.out, a.insights, min_agency=a.min_agency,
                                   min_handoff=a.min_handoff, min_routed=a.min_routed))

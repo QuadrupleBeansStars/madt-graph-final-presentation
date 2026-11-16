@@ -81,8 +81,18 @@ export function mount(canvas, raw, opts = {}) {
     filters: o.kind && filterIdx >= 0 ? [{ idx: filterIdx, value: o.kind }] : [],
   });
 
+  let only = null;   // {nodes:Set<i>, pairs:Set<'s>t'>}: show just these nodes and path edges (used for single-ticket views)
   function refresh(fit) {
     model.compute(state());
+    if (only) {
+      let vn = 0, ve = 0;
+      for (let i = 0; i < model.n; i++) { if (model.vis[i] && !only.nodes.has(i)) model.vis[i] = 0; if (model.vis[i]) vn++; }
+      for (let e = 0; e < model.m; e++) {
+        if (model.evis[e] && !(only.nodes.has(model.eS[e]) && only.nodes.has(model.eT[e]) && only.pairs.has(model.eS[e] + '>' + model.eT[e]))) model.evis[e] = 0;
+        if (model.evis[e]) ve++;
+      }
+      model.visNodes = vn; model.visEdges = ve;
+    }
     view.updateAppearance({ sizeBy: o.sizeBy, colorBy: o.colorBy, t: state().t, typeColors, states: null });
     const nodes = new Uint8Array(model.n), edges = new Uint8Array(model.m), hot = new Set();
     let any = false;
@@ -121,6 +131,12 @@ export function mount(canvas, raw, opts = {}) {
     select(id) { const i = id == null ? -1 : model.id2i.get(id); select(i == null ? -1 : i); },
     highlight(ids) { hl = new Set(ids.map((id) => model.id2i.get(id)).filter((i) => i != null)); sel = -1; refresh(false); },
     clear() { hl = null; sel = -1; refresh(false); },
+    only(ids, pairs) {
+      if (!ids) { only = null; refresh(false); return; }
+      const idx = (id) => model.id2i.get(id);
+      only = { nodes: new Set(ids.map(idx).filter((i) => i != null)), pairs: new Set((pairs || []).map(([a, b]) => idx(a) + '>' + idx(b))) };
+      hl = null; sel = -1; refresh(false);
+    },
     fit() { view.fit(true, 36, false); },
     start() { if (running) return; running = true; view.resize(); view.invalidate(); raf = requestAnimationFrame(loop); },
     stop() { running = false; cancelAnimationFrame(raf); },

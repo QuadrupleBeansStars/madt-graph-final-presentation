@@ -15,255 +15,318 @@
     <section class="slide title" data-embed="bg">
       <div class="bg"><canvas></canvas></div>
       <div class="inner">
-        <p class="kicker">MADT · Graph final presentation</p>
         <h1>Who hands the complaint<br>to whom?</h1>
-        <p class="lead">Rebuilding Bangkok’s <b>Traffy Fondue</b> complaints as a graph — and what a graph shows that a table hides.</p>
-        <p class="hint">Press <kbd>→</kbd> to start · <kbd>F</kbd> fullscreen</p>
+        <p class="lead">Rebuilding Bangkok’s <b>Traffy Fondue</b> complaints as a graph, to see what a table hides.</p>
+        <p class="hint">Data from <b>Traffy Fondue</b> · <span id="s-span"></span></p>
       </div>
     </section>
 
-    <!-- 2 · Problem -->
-    <section class="slide" data-steps="2">
+    <!-- 1b · What is Traffy Fondue -->
+    <section class="slide" data-steps="5">
+      <h2>Traffy Fondue: report a city problem in a chat, track it to the end</h2>
+      <p class="body" style="max-width:900px">A citizen-reporting platform built by NECTEC and rolled out by the Bangkok Metropolitan Administration (BMA) on 31 May 2022<sup>1</sup>. Residents use the LINE chatbot or a website; officials work the cases in a manager app<sup>4</sup>.</p>
+      <ol class="steps4" id="steps4">
+        <li class="fx" data-s="1"><i>1</i><b>Report</b><span>A resident sends a photo, a location and a short description.</span></li>
+        <li class="fx" data-s="2"><i>2</i><b>Route</b><span>The platform classifies the problem and sends it to a responsible office<sup>4</sup>.</span></li>
+        <li class="fx hot" data-s="3"><i>3</i><b>Handoff</b><span>If that office cannot fix it, the ticket moves on to another, and another.</span></li>
+        <li class="fx" data-s="4"><i>4</i><b>Update</b><span>Status changes (in progress, finished) are sent back to the resident.</span></li>
+      </ol>
+      <p class="tiny fx" data-s="5" style="margin-top:34px">The handoff is the subject of this talk. Every office a ticket passes through is written into one field, in order.</p>
+    </section>
+
+    <!-- 2 · Traffy intro -->
+    <section class="slide" data-steps="1">
       <h2>A complaint is rarely one office’s job</h2>
       <div class="cols">
         <div class="col wide">
-          <p class="body">Traffy Fondue lets residents report a broken pavement or a blocked drain in a few taps. The report is then passed through the city administration until someone fixes it.</p>
-          <p class="body fx" data-s="1">The platform launched on <b>31 May 2022</b> and passed <b>one million resolved complaints</b> in March 2026<sup>1,2</sup>. At that scale, <em>how</em> a complaint travels matters as much as how many arrive.</p>
-          <div class="question fx" data-s="2">
-            <span class="qlabel">Our question</span>
-            <p>Where do complaints get passed around, stuck, or sent back — and which handoffs look wasted?</p>
-          </div>
-        </div>
-        <div class="col tiles">
-          <div class="tile"><b id="t-agencies">686</b><span>different agency names appear in just 5,000 tickets</span></div>
-          <div class="tile"><b id="t-multi">67%</b><span>of tickets touched three or more agencies</span></div>
-          <div class="tile"><b id="t-hotline">22%</b><span>entered through the 1555 hotline and were then routed on</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3 · The data -->
-    <section class="slide" data-steps="2">
-      <h2>The data: one row per complaint, 26 columns</h2>
-      <div class="cols">
-        <div class="col wide">
-          <div class="schema">
-            <div class="grp"><h4>What</h4><code>type</code><code class="dim">comment</code></div>
-            <div class="grp"><h4>Where</h4><code>district</code><code>subdistrict</code><code class="dim">coords</code></div>
-            <div class="grp hot"><h4>Who handled it</h4><code>organization</code><code>organization_action</code></div>
-            <div class="grp"><h4>When</h4><code>timestamp</code><code>timestamp_inprogress</code><code>timestamp_finished</code></div>
-            <div class="grp"><h4>How it went</h4><code>state</code><code>star</code><code>count_reopen</code><code>duration_minutes_*</code></div>
-          </div>
-          <p class="note fx" data-s="1">Greyed fields (free text, location) are <b>not read</b> by our pipeline. Only the open-data sample is used: <b id="d-n">5,000</b> tickets, of which <b id="d-recent">84%</b> are from the last 90 days.</p>
+          <p class="body">Handoffs are not rare. A ticket lists <b><span id="t-avg"></span> agencies</b> on average, listed in order.</p>
+          <p class="body fx" data-s="1">The platform passed <b>one million resolved complaints</b> in March 2026<sup>2</sup>. At that scale, <em>how</em> a complaint travels matters as much as how many arrive.</p>
         </div>
         <div class="col">
-          <div class="spot fx" data-s="2">
-            <h4><code>organization</code> is not a name — it is a list</h4>
-            <p>Agencies, in the order they took part, separated by commas:</p>
-            <div class="rawchips" id="rawchips-mini"></div>
-            <p class="tiny">Real ticket (category: <span id="ex-cat"></span>, state: finished).</p>
+          <div class="bignums">
+            <div><b id="t-tickets">1.3M</b><span>tickets, Jan 2023 – Oct 2026</span></div>
+            <div><b id="t-perday">934</b><span>new tickets a day</span></div>
+            <div><b id="t-hotline">19%</b><span>start at the 1555 hotline</span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 4 · One row = one path -->
-    <section class="slide" data-steps="3">
-      <h2>One row is one path through the city</h2>
+    <!-- 2b · The question -->
+    <section class="slide statement">
+      <span class="qmark open" aria-hidden="true">“</span>
+      <p class="qtext">Where do complaints get <em>passed around</em>, <em>stuck</em>, or <em>sent back</em> — and which handoffs look <em>wasted</em>?</p>
+      <span class="qmark close" aria-hidden="true">”</span>
+    </section>
+
+    <!-- 3 · The table -->
+    <section class="slide" data-steps="2">
+      <span class="ch">Ch 1 · The network lens</span>
+      <h2>In the database, a complaint is one row</h2>
+      <div class="tbl-wrap">
+        <table class="rows" id="rows-table">
+          <thead><tr><th>ticket_id</th><th>type</th><th class="hot">organization</th><th>district</th><th>state</th><th>timestamp</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="zoom fx" data-s="2">
+        <div class="zl"><b>One cell, zoomed in</b><span id="z-id"></span></div>
+        <p class="zs" id="z-str"></p>
+        <p class="zt" id="z-tag"></p>
+      </div>
+    </section>
+
+    <!-- 4 · Questions a table cannot phrase -->
+    <section class="slide" data-steps="4">
+      <span class="ch">Ch 1 · What doesn’t work?</span>
+      <h2>Questions a table can’t phrase</h2>
+      <div class="cols">
+        <div class="col">
+          <div class="qcards">
+            <div class="qc"><i>1</i><span>Which agency do tickets get <em>stuck after</em>?</span></div>
+            <div class="qc"><i>2</i><span>Which two agencies pass tickets <em>back and forth</em>?</span></div>
+            <div class="qc"><i>3</i><span>If the police <em>stopped closing</em> tickets, which districts would feel it?</span></div>
+          </div>
+          <p class="note">All three ask <b>who connects to whom</b>.</p>
+          <div class="ba" id="ba"></div>
+        </div>
+        <div class="col">
+          <h4 class="sub">What it takes in SQL, for question 1 alone</h4>
+          <div class="codeblock">
+            <div class="cl fx" data-s="1"><code>1</code><span>split <b>organization</b> on commas</span><em id="sq1"></em></div>
+            <div class="cl fx" data-s="2"><code>2</code><span>explode to one row per agency</span><em id="sq2"></em></div>
+            <div class="cl fx" data-s="3"><code>3</code><span>pair each row with the next (LAG, per ticket)</span><em id="sq3"></em></div>
+            <div class="cl fx" data-s="4"><code>4</code><span>group by (from, to) and count</span><em id="sq4"></em></div>
+          </div>
+          <p class="note fx" data-s="4">…and that is only question 1. Question 3 needs <b>paths</b>, not pairs.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · One ticket is a path -->
+    <section class="slide" data-steps="6">
+      <span class="ch">Ch 2 · Nodes and edges</span>
+      <h2>Read the cell in order, and it becomes a path</h2>
+      <p class="tiny" id="p-meta" style="margin:0 0 10px"></p>
       <div id="pathviz"></div>
-      <div class="captions">
-        <p class="cap fx" data-s="1"><b>1 · Read the list.</b> Each chip is an agency, in the order it took part.</p>
-        <p class="cap fx" data-s="2"><b>2 · Clean it.</b> The root “กรุงเทพมหานคร” is on 98% of tickets so says nothing about routing: drop it. District units such as “<span id="fold-ex">ฝ่ายโยธา เขต…</span>” fold into one role, “ฝ่ายโยธา (เขต)”.</p>
-        <p class="cap fx" data-s="3"><b>3 · Draw it.</b> Every neighbouring pair becomes a directed edge. Repeat for 5,000 tickets and the paths merge into one network.</p>
+      <p class="pcap" id="pcap"></p>
+    </section>
+
+    <!-- 6 · Stack paths -->
+    <section class="slide graph" data-embed="stack" data-steps="6">
+      <span class="ch">Ch 3 · Temporal graph</span>
+      <h2>Stack the paths, and a map appears</h2>
+      <div class="gw" style="left:64px;top:112px;width:780px;height:552px"><canvas></canvas></div>
+      <div class="side">
+        <p class="date" id="stk-date"></p>
+        <p class="lead2" id="stk-count"></p>
+        <p class="stk-cap" id="stk-cap"></p>
+        <div id="stk-ladder"></div>
+        <p class="tiny" style="margin-top:10px">Real tickets first, then every ticket up to a date. The map shows agencies and handoffs that pass the size cut-offs on the full data.</p>
       </div>
     </section>
 
-    <!-- 5 · Principles -->
-    <section class="slide" data-steps="3">
-      <h2>Six graph ideas we apply</h2>
-      <div class="cards" id="principles"></div>
+    <!-- 7 · Nodes and edges -->
+    <section class="slide" data-steps="4">
+      <span class="ch">Ch 1–2 · Nodes, edges, direction, weight, time</span>
+      <h2>A graph is nodes and arrows, and we choose what they mean</h2>
+      <div class="cols">
+        <div class="col wide"><svg id="nodeviz" viewBox="0 0 640 360"></svg></div>
+        <div class="col">
+          <ul class="defs">
+            <li class="fx" data-s="1"><i class="dot" style="background:#199e70"></i><b>Node</b> = an agency or district office. <span id="d-nodes"></span></li>
+            <li class="fx" data-s="2"><i class="dot" style="background:#1a1a19"></i><b>Edge</b> = one handoff, drawn from the sender to the receiver.</li>
+            <li class="fx" data-s="3"><i class="dot" style="background:#8e8d86"></i><b>Weight</b> = tickets that took that step (line width). <b>Direction</b> matters: A→B is not B→A.</li>
+            <li class="fx" data-s="4"><i class="dot" style="background:#3987e5"></i><b>Time</b> = each edge keeps a weekly count, so the graph can replay how routing built up.</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
-    <!-- 6 · Building -->
+    <!-- 8 · Funnel -->
     <section class="slide" data-steps="3">
-      <h2>From table to graph</h2>
+      <span class="ch">Ch 2 · From a table to an edge list</span>
+      <h2>From a million rows to a graph you can read</h2>
+      <div class="funnel" id="funnel"></div>
+      <p class="tiny fx" data-s="3">Cutoffs are our choice and we report them (Ch 6): agencies with ≥1,000 tickets, handoffs with ≥500. The answers we show hold at nearby cutoffs — see the construction report.</p>
+    </section>
+
+    <!-- 9 · Edge list + live graph -->
+    <section class="slide graph" data-embed="edgelist" data-steps="1">
+      <span class="ch">Ch 2 · Edge list</span>
+      <h2>An edge list is just a table of pairs</h2>
+      <div class="gw" style="left:64px;top:112px;width:700px;height:552px"><canvas></canvas></div>
+      <div class="side wideside">
+        <h4 class="sub">Top handoffs · click a row</h4>
+        <table class="edgetab" id="edgetab"><thead><tr><th>from</th><th></th><th>to</th><th>tickets</th></tr></thead><tbody></tbody></table>
+        <p class="tiny fx" data-s="1" id="g9-count"></p>
+        <p class="tiny">The graph is the <b>same data</b>, stored the way the question needs it: you can walk along edges instead of joining rows.</p>
+      </div>
+    </section>
+
+    <!-- 10 · Construction decisions -->
+    <section class="slide" data-steps="3">
+      <span class="ch">Ch 6 · Building the graph</span>
+      <h2>Every graph is built from decisions. Here are ours</h2>
       <div class="cols">
         <div class="col wide">
-          <div class="funnel" id="funnel"></div>
+          <div class="dec2">
+            <div class="d2 fx" data-s="1"><b class="n" id="n-res"></b><span id="dec-res"></span></div>
+            <div class="d2 fx" data-s="2"><b class="n" id="n-prune"></b><span id="dec-prune"></span></div>
+            <div class="d2 fx" data-s="3"><b class="n">1 assumption</b><span>The list order is the handoff order. The data has no time for each handoff, so we cannot check it.</span></div>
+          </div>
         </div>
         <div class="col">
-          <table class="mini fx" data-s="3">
-            <thead><tr><th colspan="2">What we build</th></tr></thead>
-            <tbody>
-              <tr><td><i class="dot" style="background:#3987e5"></i>District office</td><td>50 nodes · tickets, median days</td></tr>
-              <tr><td><i class="dot" style="background:#199e70"></i>Agency / unit</td><td>140 nodes · kind, tickets, finish rate</td></tr>
-              <tr><td><i class="dot" style="background:#d95926"></i>Complaint category</td><td>36 nodes · agencies touched</td></tr>
-              <tr><td colspan="2" class="sep"></td></tr>
-              <tr><td><b>handoff</b> →</td><td>A passed it to B (directed)</td></tr>
-              <tr><td><b>routed to</b></td><td>category saw this agency</td></tr>
-            </tbody>
-          </table>
+          <div class="spot fx" data-s="1">
+            <h4>Resolution, before and after</h4>
+            <p>One role, fifty district copies:</p>
+            <div id="fold-ex"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 7 · How it looks -->
-    <section class="slide graph" data-embed="full">
-      <h2>How it looks: everything at once</h2>
-      <div class="gwrap"><canvas></canvas></div>
-      <aside class="side">
-        <p class="lead2"><span id="g1-count"></span></p>
-        <p>Colour = node type. Size = PageRank (how much routing flows through). Edges are drawn faintly; width = tickets.</p>
-        <ul class="legend"><li><i class="dot" style="background:#3987e5"></i>District office</li><li><i class="dot" style="background:#199e70"></i>Agency / unit</li><li><i class="dot" style="background:#d95926"></i>Complaint category</li></ul>
-        <p class="tiny">Live and draggable. Hover a node, drag it, scroll to zoom.</p>
-        <p class="warn">An honest first look is a hairball. The next slide makes it readable.</p>
-      </aside>
-    </section>
-
-    <!-- 8 · Make it readable -->
-    <section class="slide graph" data-embed="focus">
-      <h2>Make it readable: filter, then focus</h2>
-      <div class="gwrap"><canvas></canvas></div>
-      <aside class="side">
-        <div class="chips" id="focus-chips">
-          <button class="chip on" data-k="handoff">Handoffs only</button>
-          <button class="chip" data-k="bureau">Bureaus only</button>
-          <button class="chip" data-k="works">Focus: Public Works</button>
-          <button class="chip" data-k="cats">Add categories</button>
-        </div>
-        <p id="focus-text" class="lead2"></p>
-        <p class="tiny">Arrows appear on the selected node’s edges and when you zoom in. Click empty space to clear.</p>
-      </aside>
-    </section>
-
-    <!-- 9 · Time -->
-    <section class="slide graph" data-embed="time">
-      <h2>Over time: how the network fills in</h2>
-      <div class="gwrap"><canvas></canvas></div>
-      <aside class="side">
-        <p class="date" id="time-date">—</p>
-        <p class="lead2" id="time-count"></p>
-        <div class="chips">
-          <button class="chip on" data-r="recent">Last 4 months</button>
-          <button class="chip" data-r="all">Full range</button>
-          <button class="chip" id="time-replay">↻ Replay</button>
-        </div>
-        <p class="tiny">Positions never move while time runs — items just appear, so you can see <i>where</i> new routes form. The sample is dense only in recent months, so the full range is mostly empty until 2026.</p>
-      </aside>
-    </section>
-
-    <!-- 10 · Finding 1 -->
-    <section class="slide" data-steps="2">
-      <h2>What the graph shows (1): longer routes, fewer finished</h2>
-      <div class="cols">
-        <div class="col wide"><div id="chart-len"></div></div>
-        <div class="col">
-          <p class="body" id="len-text"></p>
-          <p class="callout fx" data-s="1"><b>Careful.</b> This is correlation. Hard problems may need more agencies <em>and</em> take longer. The graph tells us where to look, not what to blame.</p>
-          <p class="tiny fx" data-s="2">Only tickets at least 30 days old are counted, because a young ticket cannot be “finished” yet.</p>
-        </div>
+    <!-- 11 · Five metrics -->
+    <section class="slide graph" data-embed="metrics" data-steps="0">
+      <span class="ch">Ch 7 · Five ways to be important</span>
+      <h2>Five questions, five answers to “who matters?”</h2>
+      <div class="gw" style="left:64px;top:112px;width:700px;height:552px"><canvas></canvas></div>
+      <div class="side wideside">
+        <div class="chips" id="metric-chips"></div>
+        <p class="lead2" id="metric-q"></p>
+        <ol class="rank" id="metric-top"></ol>
+        <table class="winners" id="metric-all"></table>
+        <p class="tiny" id="metric-note"></p>
       </div>
     </section>
 
-    <!-- 11 · Finding 2 -->
-    <section class="slide" data-steps="2">
-      <h2>What the graph shows (2): two-way handoffs and bottlenecks</h2>
+    <!-- 12 · Insight 1: police -->
+    <section class="slide graph ins" data-embed="police" data-steps="2">
+      <span class="ch">Ch 7 · PageRank, flow</span>
+      <h2>Police-touched tickets rarely close, and it is getting worse</h2>
+      <div id="chart-police" class="chart-left"></div>
+      <div class="gw" style="left:690px;top:118px;width:526px;height:330px"><canvas></canvas></div>
+      <p class="tiny" style="position:absolute;left:690px;top:452px;width:526px" id="police-cap"></p>
+      <div class="decision fx" data-s="1" id="dec-police"></div>
+      <p class="caveat fx" data-s="2" id="cav-police"></p>
+    </section>
+
+    <!-- 13 · Insight 2: long chains -->
+    <section class="slide graph ins" data-embed="long" data-steps="2">
+      <span class="ch">Ch 8 · Path length</span>
+      <h2>The more agencies, the fewer tickets get finished</h2>
+      <div id="chart-len" class="chart-left"></div>
+      <div class="gw" style="left:690px;top:118px;width:526px;height:330px"><canvas></canvas></div>
+      <p class="tiny" style="position:absolute;left:690px;top:452px;width:526px" id="long-cap"></p>
+      <div class="decision fx" data-s="1" id="dec-len"></div>
+      <p class="caveat fx" data-s="2" id="cav-len"></p>
+    </section>
+
+    <!-- 14 · Insight 3: where a ticket ends -->
+    <section class="slide graph ins" data-embed="ends" data-steps="2">
+      <span class="ch">Ch 7 · Where flow ends</span>
+      <h2>Where a ticket ends decides whether it closes</h2>
+      <div id="chart-ends" class="chart-left"></div>
+      <div class="gw" style="left:690px;top:150px;width:526px;height:298px"><canvas></canvas></div>
+      <div class="chips" id="ends-chips" style="position:absolute;left:690px;top:112px"></div>
+      <p class="tiny" style="position:absolute;left:690px;top:452px;width:526px" id="ends-cap"></p>
+      <div class="decision fx" data-s="1" id="dec-ends"></div>
+      <p class="caveat fx" data-s="2" id="cav-ends"></p>
+    </section>
+
+    <!-- 15 · Graph RAG idea -->
+    <section class="slide" data-steps="3">
+      <span class="ch">Graph RAG module</span>
+      <h2>Rows can’t answer “why”. A graph can retrieve the path</h2>
+      <p class="askq fx" data-s="1">“Why do traffic-violation complaints stall?”</p>
+      <div class="cols" style="margin-top:28px">
+        <div class="col fx" data-s="2"><div class="cmp"><h4>Plain RAG over rows</h4><p>Retrieves the few rows that look most like the question. Good for “show me a ticket like this”. Cannot count, follow a route, or tell you what is typical.</p></div></div>
+        <div class="col fx" data-s="3"><div class="cmp g"><h4>Graph RAG</h4><p>Retrieves a path or neighbourhood computed over <b>all</b> <span id="rag-n"></span> tickets. Answers about structure — where, how many, who is upstream — come with the edges that support them.</p></div></div>
+      </div>
+    </section>
+
+    <!-- 16 · Graph RAG demo -->
+    <section class="slide graph" data-embed="rag" data-steps="0">
+      <span class="ch">Graph RAG module · pre-run demo</span>
+      <h2>The same question, answered from the graph</h2>
+      <div class="gw" style="left:64px;top:112px;width:520px;height:552px"><canvas></canvas></div>
+      <div class="ragpane">
+        <div class="chips" id="rag-chips"></div>
+        <p class="rq" id="rag-q"></p>
+        <div class="ragbox"><h4>Retrieved from the graph <span class="muted" id="rag-n-facts"></span></h4><ul id="rag-facts"></ul></div>
+        <div class="ragbox ans"><h4>Answer — written from only that context</h4><p id="rag-answer"></p></div>
+        <button class="chip" id="rag-toggle">Show what plain RAG retrieves</button>
+        <div class="ragbox plain" id="rag-plain" hidden></div>
+      </div>
+    </section>
+
+    <!-- 17 · Try it -->
+    <section class="slide" data-steps="1">
+      <h2>Now you try it</h2>
       <div class="cols">
         <div class="col wide">
-          <h4 class="sub">Pairs that pass tickets <em>both</em> ways</h4>
-          <div id="pingpong"></div>
+          <ol class="tasks" id="tasks"></ol>
         </div>
-        <div class="col">
-          <h4 class="sub fx" data-s="1">Most “in between” agencies <span class="muted">(betweenness score)</span></h4>
-          <ol class="rank fx" data-s="1" id="between"></ol>
-          <p class="tiny fx" data-s="2">Busy ≠ in the way. A table can count tickets per agency; only a graph can say which agency sits on the most routes.</p>
+        <div class="col qrcol">
+          <img src="deck/assets/qr.svg" alt="QR code to the interactive explorer" class="qr">
+          <p class="qrurl">quadruplebeansstars.github.io<br>/madt-graph-final-presentation/explorer/</p>
         </div>
       </div>
     </section>
 
-    <!-- 12 · Finding 3 -->
-    <section class="slide" data-steps="2">
-      <h2>What the graph shows (3): vague categories scatter</h2>
-      <div class="cols">
-        <div class="col wide"><div id="chart-cat"></div></div>
-        <div class="col">
-          <p class="body" id="cat-text"></p>
-          <p class="callout fx" data-s="1">A tight category like “Trees” reaches few agencies. “Other” and “Suggestion” fan out across the whole administration — a routing problem a table of categories would never reveal.</p>
-          <p class="tiny fx" data-s="2">Distinct agencies = agency nodes reached by that category’s tickets (after folding district units).</p>
-        </div>
-      </div>
-    </section>
+    <!-- ---------------- Appendix ---------------- -->
 
-    <!-- 13 · Why graph -->
-    <section class="slide" data-steps="3">
-      <h2>Why a graph and not just a table?</h2>
+    <!-- 18 · Which graph type -->
+    <section class="slide" data-steps="0">
+      <span class="ch">Appendix · Ch 3 · Graph types</span>
+      <h2>Which kind of graph? The question picks the type</h2>
       <table class="why">
-        <thead><tr><th>Question</th><th>As a table</th><th>As a graph</th></tr></thead>
+        <thead><tr><th>Type</th><th>Use when…</th><th>For Traffy</th></tr></thead>
         <tbody>
-          <tr class="fx" data-s="1"><td>Who hands off to whom?</td><td>Split a comma string, explode, self-join neighbours</td><td>The edge list <em>is</em> the data model</td></tr>
-          <tr class="fx" data-s="1"><td>Who is a bottleneck?</td><td>Count tickets per agency (busy, not “in the way”)</td><td>Betweenness: agencies on the most routes</td></tr>
-          <tr class="fx" data-s="2"><td>Is there a route A → B?</td><td>Recursive self-joins, one per hop</td><td>Shortest path in one call</td></tr>
-          <tr class="fx" data-s="2"><td>Do agencies work in teams?</td><td>No natural query</td><td>Community detection (Louvain)</td></tr>
-          <tr class="fx" data-s="3"><td>Context for an LLM</td><td>Top-k similar rows lose the route</td><td>Retrieve a sub-graph: the chain, stats and neighbours together</td></tr>
+          <tr><td>Directed, weighted</td><td>Who sends to whom, how much</td><td><em>Used.</em> Handoffs between agencies, weight = tickets.</td></tr>
+          <tr><td>Temporal</td><td>Timing or evolution is the question</td><td><em>Used.</em> Weekly counts per edge drive the time slider.</td></tr>
+          <tr><td>Bipartite (+ projection)</td><td>Two node kinds, edges only across</td><td>Used as a second layer: category → agency (“routed to”).</td></tr>
+          <tr><td>Multigraph</td><td>Repeated interactions carry the meaning</td><td>Collapsed: repeats become the edge weight.</td></tr>
+          <tr><td>Ego network</td><td>Zoom to one node and its world</td><td>Available in the explorer: select any node.</td></tr>
+          <tr><td>Hypergraph</td><td>A group acts as one unit</td><td>Not needed: a ticket is a path, not a group.</td></tr>
         </tbody>
       </table>
     </section>
 
-    <!-- 14 · Graph RAG -->
-    <section class="slide" data-steps="3">
-      <h2>Where Graph RAG fits <span class="tag">design — not built yet</span></h2>
-      <div class="flow">
-        <div class="step fx" data-s="1"><b>1 · Question</b><p>“Why are traffic-violation complaints slow to finish?”</p></div>
-        <div class="arr">→</div>
-        <div class="step fx" data-s="1"><b>2 · Link entities</b><p>Match to nodes: category <code>ผิดกฎจราจร</code>, agencies it reaches</p></div>
-        <div class="arr">→</div>
-        <div class="step fx" data-s="2"><b>3 · Expand</b><p>Walk 1–2 hops: handoff edges with counts, median days, finish rate</p></div>
-        <div class="arr">→</div>
-        <div class="step fx" data-s="3"><b>4 · Answer</b><p>LLM explains using the retrieved sub-graph and cites its edges</p></div>
+    <!-- 19 · Fingerprint -->
+    <section class="slide" data-steps="0">
+      <span class="ch">Appendix · Ch 8 · Structure</span>
+      <h2>What shape is the network? A hub-heavy core, no pure shape</h2>
+      <div class="cols">
+        <div class="col wide"><table class="mini" id="fp-table"><thead><tr><th>Measure</th><th>Ours</th><th>Random graph, same size</th></tr></thead><tbody></tbody></table></div>
+        <div class="col"><div class="limits" id="fp-tests"></div></div>
       </div>
-      <div class="ragex fx" data-s="3"><h4>Illustration: what step 3 would return for the category “ผิดกฎจราจร · Traffic violation”</h4><div id="rag-lines"></div></div>
-      <p class="note fx" data-s="3">Every edge already carries a plain-text note (“226 tickets · median 1.2 d · 80% finished”) and the viewer can highlight any set of nodes from outside (<code>GraphViewer.highlight([...])</code>), so a retrieved sub-graph can be shown next to the answer.</p>
     </section>
 
-    <!-- 15 · Try it -->
-    <section class="slide" data-steps="2">
-      <h2>Try it yourself</h2>
+    <!-- 21 · Limits + sources -->
+    <section class="slide" data-steps="1">
+      <span class="ch">Appendix · Ch 4 · The data gate</span>
+      <h2>Read with care, and where this comes from</h2>
       <div class="cols">
-        <div class="col wide">
-          <p class="body">The full explorer has a time slider, filters, search, shortest-path tool and drag-to-pin. Four things to find:</p>
-          <ol class="tasks" id="tasks"></ol>
-          <a class="cta" href="explorer/index.html#d=traffy">Open the explorer →</a>
+        <div class="col">
+          <div class="limits"><h4>Limits we want to be upfront about</h4><ul id="limits-list"></ul></div>
         </div>
         <div class="col">
-          <div class="limits fx" data-s="1">
-            <h4>Limits we want to be upfront about</h4>
-            <ul>
-              <li>5,000-ticket sample, mostly from the last 3 months.</li>
-              <li>Completion rates need ≥30-day-old tickets; counts are small for long chains.</li>
-              <li>Correlation, not cause.</li>
-              <li><code>forward</code> and <code>follow</code> states are not in the data dictionary; we show them as-is.</li>
-              <li>Names are Thai; English glosses are ours.</li>
-            </ul>
-          </div>
-          <p class="tiny fx" data-s="2">Next: run the full export, add location clusters (repeat complaints) and a Graph RAG prototype.</p>
+          <ol class="sources">
+            <li>Frontiers in Sustainable Cities, 2025 — Traffy Fondue case study (platform launched 31 May 2022). <span>frontiersin.org/articles/10.3389/frsc.2025.1491621</span></li>
+            <li>Bangkok Metropolitan Administration, 4 Mar 2026 — Traffy Fondue surpasses one million resolved complaints. <span>pr-bangkok.com/?p=583017</span></li>
+            <li>Traffy Fondue monthly ticket exports, Jan 2023 – Oct 2026 (BMA / NECTEC open data). Free text, photos, addresses and coordinates are not used.</li>
+            <li>NECTEC / NSTDA and Thai PBS World, 2022–2023 — how the LINE chatbot, AI routing and the Traffy Fondue Manager app work. <span>nstda.or.th · thaipbsworld.com</span></li>
+            <li>Course: MADT 7202 Web &amp; Social Network Analytics, NIDA — Chapters 1–4 and 6–8.</li>
+          </ol>
+          <p class="tiny">All numbers are computed by <code>pipeline/traffy_story.py</code> into <code>data/traffy_story.json</code>; the graph by <code>pipeline/traffy_handoff.py</code>.</p>
         </div>
       </div>
     </section>
 
-    <!-- 16 · Sources -->
-    <section class="slide">
-      <h2>Sources</h2>
-      <ol class="sources">
-        <li>Frontiers in Sustainable Cities, 2025 — Traffy Fondue case study (platform launched 31 May 2022). <span>frontiersin.org/articles/10.3389/frsc.2025.1491621</span></li>
-        <li>Bangkok Metropolitan Administration, 4 Mar 2026 — Traffy Fondue surpasses one million resolved complaints. <span>pr-bangkok.com/?p=583017</span></li>
-        <li>Traffy Fondue ticket export (5,000-ticket sample) and data dictionary provided by the team; BMA / NECTEC open data. Free text, photos, addresses and coordinates are not used.</li>
-      </ol>
-      <p class="tiny">Code, pipeline and the explorer: this repository. All numbers on these slides are computed by <code>pipeline/traffy_handoff.py</code> into <code>data/traffy_insights.json</code>.</p>
-    </section>
-
+  <div id="strip"><i id="sfill"></i></div><div id="pgno"></div>
   </div>
-  <div id="bar"><div id="prog"></div></div>
-  <div id="nav"><button id="prev" aria-label="Previous">←</button><span id="count">1 / 16</span><button id="next" aria-label="Next">→</button></div>
+  <div id="nav"><button id="prev" aria-label="Previous">←</button><button id="next" aria-label="Next">→</button></div>
 </div>
 <script type="module" src="deck/deck.js"></script>
 </body>

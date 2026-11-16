@@ -1,406 +1,402 @@
 {
- "tickets": 5000,
+ "tickets": 1307655,
  "span": [
-  1723099331000,
-  1794292736000
+  1672507076219,
+  1793465597589
  ],
- "recent_share_90d": 0.841,
+ "recent_share_90d": 0.1,
  "states": {
-  "Finished": 2710,
-  "Forwarded": 1250,
-  "In progress": 808,
-  "Follow-up": 109,
-  "Waiting": 77,
-  "Not relevant": 46
+  "Finished": 972140,
+  "In progress": 327812,
+  "Waiting": 7703
  },
- "via_hotline_pct": 22.5,
- "cross_district_pct": 3.4,
- "root_in_chain_pct": 97.9,
- "root_first_pct": 70.8,
- "distinct_raw_orgs": 686,
- "distinct_nodes_after_fold": 418,
- "organization_vs_action_differ_pct": 95.3,
+ "via_hotline_pct": 18.7,
+ "cross_district_pct": 1.6,
+ "root_in_chain_pct": 99.2,
+ "root_first_pct": 68.5,
+ "distinct_raw_orgs": 3085,
+ "distinct_nodes_after_fold": 2370,
+ "organization_vs_action_differ_pct": null,
  "by_chain_length": [
   {
    "len": 1,
    "label": "1",
-   "tickets": 174,
-   "median_days": 0.7,
-   "finished_pct": 15,
-   "n_old": 20
+   "tickets": 25069,
+   "median_days": 1.2,
+   "finished_pct": 88,
+   "n_old": 18682
   },
   {
    "len": 2,
    "label": "2",
-   "tickets": 1467,
-   "median_days": 1.1,
-   "finished_pct": 80,
-   "n_old": 312
+   "tickets": 368103,
+   "median_days": 2.8,
+   "finished_pct": 83,
+   "n_old": 310321
   },
   {
    "len": 3,
    "label": "3",
-   "tickets": 1400,
-   "median_days": 1.7,
-   "finished_pct": 81,
-   "n_old": 648
+   "tickets": 316958,
+   "median_days": 3.3,
+   "finished_pct": 75,
+   "n_old": 283655
   },
   {
    "len": 4,
    "label": "4",
-   "tickets": 1086,
-   "median_days": 2.7,
-   "finished_pct": 73,
-   "n_old": 499
+   "tickets": 243236,
+   "median_days": 4.1,
+   "finished_pct": 71,
+   "n_old": 210151
   },
   {
    "len": 5,
    "label": "5",
-   "tickets": 570,
-   "median_days": 3.2,
-   "finished_pct": 68,
-   "n_old": 252
+   "tickets": 189712,
+   "median_days": 6.8,
+   "finished_pct": 50,
+   "n_old": 166286
   },
   {
    "len": 6,
    "label": "6+",
-   "tickets": 303,
-   "median_days": 2.7,
-   "finished_pct": 66,
-   "n_old": 173
+   "tickets": 164577,
+   "median_days": 11.0,
+   "finished_pct": 46,
+   "n_old": 152648
   }
  ],
  "short_vs_long": {
   "short(<=3)": {
-   "tickets": 3041,
-   "median_days": 1.2,
-   "finished_pct": 80,
-   "n_old": 980
+   "tickets": 710130,
+   "median_days": 3.0,
+   "finished_pct": 79,
+   "n_old": 612658
   },
   "long(>=5)": {
-   "tickets": 873,
-   "median_days": 2.9,
-   "finished_pct": 67,
-   "n_old": 425
+   "tickets": 354289,
+   "median_days": 8.4,
+   "finished_pct": 48,
+   "n_old": 318934
   }
  },
  "top_handoffs": [
   {
-   "from": "สำนักการโยธา · Public Works Dept",
-   "to": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
-   "tickets": 226,
-   "median_days": 1.2
+   "from": "กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police",
+   "to": "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police",
+   "tickets": 132118,
+   "median_days": 5.4
   },
   {
-   "from": "เขตธนบุรี",
-   "to": "สำนักเทศกิจ · City Law Enforcement",
-   "tickets": 164,
-   "median_days": 1.7
+   "from": "สำนักการโยธา · Public Works Dept",
+   "to": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
+   "tickets": 80426,
+   "median_days": 5.1
   },
   {
    "from": "ร้องทุกข์ 1555 · 1555 hotline",
-   "to": "เขตพระนคร",
-   "tickets": 135,
-   "median_days": 2.9
+   "to": "เพื่อนชัชชาติ",
+   "tickets": 78509,
+   "median_days": 6.7
   },
   {
-   "from": "กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police",
-   "to": "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police",
-   "tickets": 132,
-   "median_days": 7.6
+   "from": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
+   "to": "สำนักการโยธา · Public Works Dept",
+   "tickets": 45502,
+   "median_days": 4.2
   },
   {
-   "from": "สำนักเทศกิจ · City Law Enforcement",
-   "to": "ฝ่ายเทศกิจ (เขต) · District enforcement",
-   "tickets": 123,
-   "median_days": 1.6
+   "from": "Bangkok Smart Lighting (สำนักการโยธา)",
+   "to": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
+   "tickets": 35351,
+   "median_days": 5.0
+  },
+  {
+   "from": "การไฟฟ้านครหลวง (เขต) · Metropolitan Electricity Authority",
+   "to": "การไฟฟ้านครหลวง MEA · Metropolitan Electricity Authority",
+   "tickets": 31980,
+   "median_days": 17.1
   },
   {
    "from": "ศูนย์ควบคุมระบบป้องกันน้ำท่วม · Flood Control Centre",
    "to": "พนักงานกวาด (เขต)",
-   "tickets": 109,
-   "median_days": 0.8
+   "tickets": 27132,
+   "median_days": 6.0
   },
   {
-   "from": "เขตประเวศ",
-   "to": "สำนักการแพทย์ · Medical Services",
-   "tickets": 95,
-   "median_days": 0.9
+   "from": "การไฟฟ้านครหลวง MEA · Metropolitan Electricity Authority",
+   "to": "การไฟฟ้านครหลวง (เขต) · Metropolitan Electricity Authority",
+   "tickets": 25575,
+   "median_days": 16.8
   },
   {
-   "from": "สำนักป้องกันและบรรเทาสาธารณภัย · Disaster Prevention",
-   "to": "สำนักงานอำนวยการสาธารณภัย สปภ.",
-   "tickets": 93,
-   "median_days": 10.8
+   "from": "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police",
+   "to": "กองบังคับการตำรวจนครบาล 5 (บก.น.5)",
+   "tickets": 24099,
+   "median_days": 15.0
+  },
+  {
+   "from": "สำนักงานควบคุมอาคาร สำนักการโยธา (สคอ.สนย.)",
+   "to": "สำนักการโยธา · Public Works Dept",
+   "tickets": 21026,
+   "median_days": 0.2
+  },
+  {
+   "from": "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police",
+   "to": "กองบังคับการตำรวจนครบาล 2 (บก.น.2)",
+   "tickets": 20857,
+   "median_days": 3.8
   },
   {
    "from": "สำนักการจราจรและขนส่ง กทม. (สจส.) · Traffic & Transport",
    "to": "สำนักงานวิศวกรรมจราจร สวจ.สจส.",
-   "tickets": 92,
-   "median_days": 1.2
-  },
-  {
-   "from": "สำนักการแพทย์ · Medical Services",
-   "to": "โรงพยาบาลสิรินธร สำนักการแพทย์",
-   "tickets": 82,
-   "median_days": 0.9
-  },
-  {
-   "from": "สำนักสิ่งแวดล้อม · Environment Dept",
-   "to": "สำนักงานบริหารจัดการพื้นที่สีเขียว สำนักสิ่งแ…",
-   "tickets": 79,
-   "median_days": 3.7
-  },
-  {
-   "from": "กรุงเทพโปร่งใส · BKK Transparent",
-   "to": "ศูนย์ปฏิบัติการติดตามการต่อต้านการทุจริตของ ก… · Anti-corruption Centre",
-   "tickets": 76,
-   "median_days": 37.6
+   "tickets": 20501,
+   "median_days": 2.7
   }
  ],
- "bidirectional_pairs": 48,
- "handoff_edges": 898,
+ "bidirectional_pairs": 108,
+ "handoff_edges": 958,
  "ping_pong_examples": [
-  {
-   "a": "สำนักการโยธา · Public Works Dept",
-   "b": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
-   "a_to_b": 226,
-   "b_to_a": 75
-  },
-  {
-   "a": "ฝ่ายเทศกิจ (เขต) · District enforcement",
-   "b": "สำนักเทศกิจ · City Law Enforcement",
-   "a_to_b": 17,
-   "b_to_a": 123
-  },
   {
    "a": "กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police",
    "b": "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police",
-   "a_to_b": 132,
-   "b_to_a": 3
+   "a_to_b": 132118,
+   "b_to_a": 5354
   },
   {
-   "a": "ฝ่ายโยธา (เขต) · District public works",
-   "b": "สำนักการวางผังและพัฒนาเมือง · City Planning",
-   "a_to_b": 60,
-   "b_to_a": 14
+   "a": "สำนักการโยธา · Public Works Dept",
+   "b": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
+   "a_to_b": 80426,
+   "b_to_a": 45502
   },
   {
-   "a": "ฝ่ายเทศกิจ (เขต) · District enforcement",
-   "b": "เขตป้อมปราบศัตรูพ่าย",
-   "a_to_b": 4,
-   "b_to_a": 59
+   "a": "การไฟฟ้านครหลวง (เขต) · Metropolitan Electricity Authority",
+   "b": "การไฟฟ้านครหลวง MEA · Metropolitan Electricity Authority",
+   "a_to_b": 31980,
+   "b_to_a": 25575
   },
   {
    "a": "Bangkok Smart Lighting (สำนักการโยธา)",
    "b": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
-   "a_to_b": 38,
-   "b_to_a": 22
+   "a_to_b": 35351,
+   "b_to_a": 14121
+  },
+  {
+   "a": "พนักงานกวาด (เขต)",
+   "b": "ศูนย์ควบคุมระบบป้องกันน้ำท่วม · Flood Control Centre",
+   "a_to_b": 646,
+   "b_to_a": 27132
+  },
+  {
+   "a": "สำนักการโยธา · Public Works Dept",
+   "b": "สำนักงานควบคุมอาคาร สำนักการโยธา (สคอ.สนย.)",
+   "a_to_b": 615,
+   "b_to_a": 21026
   }
  ],
  "top_betweenness": [
   {
    "agency": "สำนักการโยธา · Public Works Dept",
-   "score": 0.1201
+   "score": 0.1349
   },
   {
-   "agency": "ฝ่ายเทศกิจ (เขต) · District enforcement",
-   "score": 0.0963
+   "agency": "เพื่อนชัชชาติ",
+   "score": 0.1047
   },
   {
-   "agency": "ฝ่ายโยธา (เขต) · District public works",
-   "score": 0.0934
-  },
-  {
-   "agency": "สำนักสิ่งแวดล้อม · Environment Dept",
-   "score": 0.066
-  },
-  {
-   "agency": "สำนักอนามัย · Health Dept",
-   "score": 0.0629
+   "agency": "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police",
+   "score": 0.0517
   },
   {
    "agency": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
-   "score": 0.0554
+   "score": 0.0444
   },
   {
-   "agency": "สำนักการวางผังและพัฒนาเมือง · City Planning",
-   "score": 0.0547
+   "agency": "ฝ่ายโยธา (เขต) · District public works",
+   "score": 0.0392
   },
   {
-   "agency": "ฝ่ายรักษาความสะอาดฯ (เขต) · District sanitation",
-   "score": 0.048
+   "agency": "ฝ่ายเทศกิจ (เขต) · District enforcement",
+   "score": 0.0371
+  },
+  {
+   "agency": "กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police",
+   "score": 0.0333
+  },
+  {
+   "agency": "สำนักการจราจรและขนส่ง กทม. (สจส.) · Traffic & Transport",
+   "score": 0.027
   }
  ],
  "top_pagerank": [
   {
+   "agency": "กองบัญชาการตำรวจนครบาล (บช.น.) · Metropolitan Police",
+   "score": 0.11
+  },
+  {
+   "agency": "สำนักงานตำรวจแห่งชาติ (Royal Thai Police) · Royal Thai Police",
+   "score": 0.0936
+  },
+  {
+   "agency": "สำนักงานก่อสร้างและบูรณะ สำนักการโยธา (สกบ.สน… · Construction & Repair Office",
+   "score": 0.0548
+  },
+  {
+   "agency": "สำนักการโยธา · Public Works Dept",
+   "score": 0.0391
+  },
+  {
    "agency": "ฝ่ายเทศกิจ (เขต) · District enforcement",
-   "score": 0.0348
+   "score": 0.0324
   },
   {
    "agency": "ฝ่ายโยธา (เขต) · District public works",
-   "score": 0.0336
+   "score": 0.0307
   },
   {
-   "agency": "สำนักดิจิทัลกทม.",
-   "score": 0.0205
+   "agency": "Bangkok Smart Lighting (สำนักการโยธา)",
+   "score": 0.0297
   },
   {
-   "agency": "สำนักงาน(เขต)",
-   "score": 0.02
-  },
-  {
-   "agency": "ฝ่ายสิ่งแวดล้อมฯ (เขต) · District environment",
-   "score": 0.02
-  },
-  {
-   "agency": "สำนักสิ่งแวดล้อม · Environment Dept",
-   "score": 0.0181
-  },
-  {
-   "agency": "สำนักการวางผังและพัฒนาเมือง · City Planning",
-   "score": 0.018
-  },
-  {
-   "agency": "สำนักอนามัย · Health Dept",
-   "score": 0.0179
+   "agency": "การไฟฟ้านครหลวง MEA · Metropolitan Electricity Authority",
+   "score": 0.0239
   }
  ],
- "weak_components": 1,
+ "weak_components": 2,
  "categories": [
   {
-   "category": "อื่นๆ · Other",
-   "tickets": 1355,
-   "agencies": 195,
-   "avg_chain": 3.6,
-   "finished_pct": 81,
-   "median_days": 2.2
-  },
-  {
-   "category": "เสนอแนะ · Suggestion",
-   "tickets": 421,
-   "agencies": 101,
-   "avg_chain": 3.6,
-   "finished_pct": 70,
-   "median_days": 2.9
-  },
-  {
    "category": "ทางเท้า · Sidewalk",
-   "tickets": 364,
-   "agencies": 53,
-   "avg_chain": 3.0,
-   "finished_pct": 36,
-   "median_days": 1.0
+   "tickets": 131590,
+   "agencies": 846,
+   "avg_chain": 3.2,
+   "finished_pct": 72,
+   "median_days": 3.2
   },
   {
    "category": "ถนน · Road",
-   "tickets": 348,
-   "agencies": 68,
-   "avg_chain": 2.9,
-   "finished_pct": 78,
-   "median_days": 1.0
+   "tickets": 123285,
+   "agencies": 916,
+   "avg_chain": 3.4,
+   "finished_pct": 59,
+   "median_days": 3.3
   },
   {
    "category": "ผิดกฎจราจร · Traffic violation",
-   "tickets": 324,
-   "agencies": 102,
-   "avg_chain": 3.7,
-   "finished_pct": 70,
-   "median_days": 2.3
+   "tickets": 103507,
+   "agencies": 589,
+   "avg_chain": 4.1,
+   "finished_pct": 54,
+   "median_days": 3.1
   },
   {
-   "category": "ความสะอาด · Cleanliness",
-   "tickets": 270,
-   "agencies": 44,
-   "avg_chain": 2.7,
-   "finished_pct": 70,
-   "median_days": 1.2
+   "category": "อื่นๆ · Other",
+   "tickets": 92873,
+   "agencies": 1274,
+   "avg_chain": 3.4,
+   "finished_pct": 68,
+   "median_days": 4.8
   },
   {
    "category": "ไฟฟ้า · Electricity / lights",
-   "tickets": 241,
-   "agencies": 50,
-   "avg_chain": 4.0,
-   "finished_pct": 42,
-   "median_days": 1.0
+   "tickets": 90897,
+   "agencies": 790,
+   "avg_chain": 4.6,
+   "finished_pct": 55,
+   "median_days": 8.6
   },
   {
-   "category": "กรุงเทพโปร่งใส · BKK Transparent",
-   "tickets": 234,
-   "agencies": 44,
-   "avg_chain": 3.1,
-   "finished_pct": 63,
-   "median_days": 16.3
+   "category": "ความสะอาด · Cleanliness",
+   "tickets": 77523,
+   "agencies": 713,
+   "avg_chain": 2.5,
+   "finished_pct": 89,
+   "median_days": 2.4
   },
   {
-   "category": "ทุจริต · Corruption",
-   "tickets": 227,
-   "agencies": 62,
+   "category": "อุปกรณ์ชำรุด",
+   "tickets": 48273,
+   "agencies": 815,
    "avg_chain": 3.3,
-   "finished_pct": 57,
-   "median_days": 23.8
+   "finished_pct": 66,
+   "median_days": 3.0
+  },
+  {
+   "category": "อาคารสถานที่ชำรุด · Damaged building",
+   "tickets": 39991,
+   "agencies": 732,
+   "avg_chain": 4.0,
+   "finished_pct": 76,
+   "median_days": 0.9
   },
   {
    "category": "เสียง · Noise",
-   "tickets": 195,
-   "agencies": 57,
-   "avg_chain": 3.1,
-   "finished_pct": 21,
-   "median_days": 0.8
-  },
-  {
-   "category": "ฝุ่นควัน&กลิ่น&PM2.5 · Dust / smoke / smell",
-   "tickets": 175,
-   "agencies": 41,
-   "avg_chain": 3.4,
-   "finished_pct": 53,
-   "median_days": 1.9
+   "tickets": 37257,
+   "agencies": 652,
+   "avg_chain": 3.2,
+   "finished_pct": 70,
+   "median_days": 5.2
   },
   {
    "category": "น้ำท่วม · Flooding",
-   "tickets": 165,
-   "agencies": 32,
+   "tickets": 35811,
+   "agencies": 452,
    "avg_chain": 4.2,
-   "finished_pct": 76,
-   "median_days": 0.8
+   "finished_pct": 81,
+   "median_days": 5.0
   },
   {
    "category": "ต้นไม้ · Trees",
-   "tickets": 163,
-   "agencies": 26,
-   "avg_chain": 2.4,
-   "finished_pct": 27,
-   "median_days": 0.6
+   "tickets": 32341,
+   "agencies": 541,
+   "avg_chain": 2.5,
+   "finished_pct": 86,
+   "median_days": 4.1
   },
   {
-   "category": "ป้าย · Signs",
-   "tickets": 157,
-   "agencies": 26,
-   "avg_chain": 3.3,
-   "finished_pct": 96,
-   "median_days": 1.6
+   "category": "ฝุ่นควัน&กลิ่น&PM2.5 · Dust / smoke / smell",
+   "tickets": 29910,
+   "agencies": 650,
+   "avg_chain": 3.7,
+   "finished_pct": 83,
+   "median_days": 5.7
+  },
+  {
+   "category": "หาบเร่แผงลอย · Street vendors",
+   "tickets": 29227,
+   "agencies": 343,
+   "avg_chain": 2.4,
+   "finished_pct": 87,
+   "median_days": 3.3
+  },
+  {
+   "category": "สาธารณูปโภค -> ไฟฟ้า -> ขอซ่อมเปลี่ยน",
+   "tickets": 26046,
+   "agencies": 205,
+   "avg_chain": 5.6,
+   "finished_pct": 57,
+   "median_days": 14.8
   }
  ],
  "example": {
   "categories": [
-   "อื่นๆ",
-   "น้ำท่วม"
+   "ต้นไม้"
   ],
-  "district": "เขตตลิ่งชัน",
+  "district": "เขตทุ่งครุ",
   "state": "Finished",
   "chain": [
-   "ร้องทุกข์ 1555",
-   "เขตตลิ่งชัน",
+   "เพื่อนชัชชาติ",
+   "เขตทุ่งครุ",
    "ฝ่ายโยธา (เขต)",
-   "สำนักการระบายน้ำ",
-   "กองระบบท่อระบายน้ำ สำนักการระบายน้ำ"
+   "ผอ.(เขต) (นายพงค์ศักดิ์)",
+   "กลุ่มกรุงธนใต้ (นายเฉลิมพล โชตินุชิต)"
   ],
-  "raw_org": "ร้องทุกข์ กทม. 1555, กรุงเทพมหานคร, เขตตลิ่งชัน, ฝ่ายโยธา เขตตลิ่งชัน, สำนักการระบายน้ำ กทม., กองระบบท่อระบายน้ำ สำนักการระบายน้ำ"
+  "raw_org": "เพื่อนชัชชาติ, เขตทุ่งครุ, กรุงเทพมหานคร, ฝ่ายโยธา เขตทุ่งครุ, ผอ.เขตทุ่งครุ (นายพงค์ศักดิ์), กลุ่มกรุงธนใต้ (นายเฉลิมพล โชตินุชิต)"
  },
  "graph": {
-  "nodes": 226,
-  "edges": 1451,
-  "communities": 10,
-  "kb": 282.5
+  "nodes": 337,
+  "edges": 1492,
+  "communities": 26,
+  "kb": 928.7
  }
 }

@@ -8,13 +8,11 @@ Two static sites in one repo (no build step, no dependencies):
 | **Explorer** | `/explorer/` | The interactive viewer for classmates: filters, search, highlight, shortest path, drag-to-pin and a **time slider**. |
 
 The Traffy Fondue graph is built from the ordered `organization` column — the list of
-agencies that handled each complaint — so each ticket becomes a **path** and 5,000
+agencies that handled each complaint — so each ticket becomes a **path** and all
 tickets merge into one **agency handoff network**.
 
-> **Data status.** Traffy Fondue is the **real 5,000-ticket sample** (derived data only:
-> free text, photos, addresses and coordinates are never read). The Offshore Leaks tab in
-> the explorer is **synthetic demo data** (a banner says so). The sample is ~84% from the
-> last 90 days, so the time slider is only dense in recent months.
+> **Data status.** The graph is built from all Traffy Fondue tickets, Jan 2023 – Oct 2026 (derived data only:
+> free text, photos, addresses and coordinates are never read).
 
 ## Run locally
 
@@ -59,10 +57,6 @@ follow, irrelevant` (`forward`/`follow` are not in the data dictionary — shown
 `organization` (participation order). Names are Thai; English glosses are in
 `pipeline/traffy_handoff.py` (`CAT_EN`, `AGENCY_EN`).
 
-Offshore demo data: `python pipeline/make_demo_data.py`. Real ICIJ data:
-`python pipeline/offshore_adapter.py --input <csv folder> --country Thailand --max-nodes 4000`
-(untested on the real download — check the printed counts on first run).
-
 ## What the explorer does
 
 - **Filters:** node types, edge types, minimum connections, community, attribute filters
@@ -102,17 +96,15 @@ Times are epoch milliseconds (UTC). `deg`, `pr` (PageRank) and `comm` (Louvain) 
 
 ## Limits
 
-- A 5,000-ticket sample; completion rates for long chains rest on a few hundred tickets.
 - Correlations (longer chain ↔ lower completion) are not causes.
 - Canvas 2D handles a few thousand nodes; keep slices under ~5–8k.
 - Traffy data: check the provider's terms before publishing larger real extracts.
-  Offshore Leaks: inclusion does not imply wrongdoing; data is ODbL / CC BY-SA.
 
 ## Layout
 
 ```
 index.html  deck/{deck.css,deck.js}                      slides
 explorer/   index.html, css/, js/{app,graph,layout,render,theme,embed}.js
-data/       datasets.json, traffy.json, traffy_insights.json, offshore.json (demo)
-pipeline/   graphkit.py, traffy_handoff.py, offshore_adapter.py, make_demo_data.py
+data/       datasets.json, traffy.json, traffy_insights.json
+pipeline/   graphkit.py, traffy_handoff.py
 ```
