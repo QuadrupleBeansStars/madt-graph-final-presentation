@@ -11,8 +11,9 @@ The Traffy Fondue graph is built from the ordered `organization` column — the 
 agencies that handled each complaint — so each ticket becomes a **path** and all
 tickets merge into one **agency handoff network**.
 
-> **Data status.** The graph is built from all Traffy Fondue tickets, Jan 2023 – Oct 2026 (derived data only:
-> free text, photos, addresses and coordinates are never read).
+> **Data.** Bangkok Traffy Fondue tickets, Jan 2023 – Oct 2026 (about 1.3 million after cleaning).
+> Only **derived** graph data is published here (`data/*.json`, about 1 MB): no ticket text, photos,
+> addresses or coordinates. The raw monthly exports and the course lecture PDFs are deliberately not in this repo.
 
 ## Run locally
 
@@ -25,37 +26,41 @@ Slides: `→`/`Space` next step · `←` back · `F` fullscreen · click or swip
 
 ## Deploy on GitHub Pages
 
-Settings → Pages → *Deploy from a branch* → pick the branch (`graph-explorer`, or `main`
-after merging) and `/ (root)`. The slides are at the site root, the explorer at `/explorer/`.
+Settings → Pages → *Deploy from a branch* → pick the branch (`graph-explorer`) and `/ (root)`.
+Slides: `https://quadruplebeansstars.github.io/madt-graph-final-presentation/` ·
+Explorer: `.../explorer/`.
 
-## Rebuild the Traffy graph from a new export
+## Rebuild the data from raw exports
 
-Python 3.10+ with `pandas`, `numpy`, `networkx`, `scipy`.
+The site only needs `data/*.json`, which are already committed. Re-running the pipeline needs the
+raw monthly exports (`bangkok_YYYY-MM.csv.gz`), which are **not** in this repo.
+Python 3.10+ with `pandas`, `numpy`, `networkx`, `scipy` (`pip install -r pipeline/requirements.txt`).
 
 ```bash
-python pipeline/traffy_handoff.py --input "path/to/bangkok_*.csv"   # one or several files / globs
-# writes data/traffy.json (graph for the viewer) and data/traffy_insights.json (numbers on the slides)
+python pipeline/traffy_handoff.py --input "path/to/bangkok_*.csv.gz"   # -> data/traffy.json, data/traffy_insights.json
+python pipeline/traffy_story.py   --input "path/to/bangkok_*.csv.gz"   # -> data/traffy_story.json (numbers on the slides)
+python pipeline/graphrag_demo.py  --cache prep.pkl                     # -> data/graphrag_demo.json (offline Graph RAG demo)
 ```
 
-Required columns: `ticket_id, type, organization, district, timestamp, state`. Optional and
-used if present: `organization_action, count_reopen, duration_minutes_total`.
+Required columns: `ticket_id, type, organization, district, timestamp, state`. Optional and used if
+present: `organization_action, count_reopen, duration_minutes_total`.
 
 What the adapter does
 - **Drops the root** "กรุงเทพมหานคร" (on ~98% of chains, no routing information).
-- **Folds district units** ("ฝ่ายโยธา เขตดินแดง") into one role ("ฝ่ายโยธา (เขต)"); district
-  offices stay as 50 District nodes.
+- **Folds district units** ("ฝ่ายโยธา เขตดินแดง") into one role ("ฝ่ายโยธา (เขต)"); district offices stay as District nodes.
 - Splits `type` on commas → one Category edge per tag.
 - **Nodes:** District office, Agency / unit (with `kind`), Category.
   **Edges:** `handoff` (directed, neighbours in a chain) and `routed_to` (category → agency),
-  each with a weekly ticket series and a plain-text `note` ("226 tickets · median 1.2 d · 80% finished").
-- Completion rates only use tickets ≥ 30 days old (a young ticket cannot be finished yet).
-- Thresholds: `--min-agency 8 --min-handoff 3 --min-routed 4`.
+  each with a weekly ticket series and a plain-text `note` ("132,118 tickets · median 5.4 d · 40% finished").
+- **Pruning** keeps the graph readable: agencies with ≥ 1,000 tickets, handoffs ≥ 500, category routes ≥ 800
+  (`--min-agency --min-handoff --min-routed`). Result: 337 nodes, 1,492 edges.
+- **"Finished"** means Traffy state `finish` *and* closed within 90 days, measured only on tickets at least
+  120 days old, so old and new tickets are compared fairly.
 
-Things to know about the data: `state` takes the values `start, forward, inprogress, finish,
-follow, irrelevant` (`forward`/`follow` are not in the data dictionary — shown as-is);
-`organization` and `organization_action` differ on ~95% of rows, the adapter uses
-`organization` (participation order). Names are Thai; English glosses are in
-`pipeline/traffy_handoff.py` (`CAT_EN`, `AGENCY_EN`).
+Things to know about the data: `state` takes the values `start, forward, inprogress, finish, follow,
+irrelevant` (`forward`/`follow` are not in the data dictionary, shown as-is); `organization` and
+`organization_action` differ on ~95% of rows, the adapter uses `organization` (participation order).
+Names are Thai; English glosses are in `pipeline/traffy_handoff.py` (`CAT_EN`, `AGENCY_EN`).
 
 ## What the explorer does
 
@@ -98,13 +103,18 @@ Times are epoch milliseconds (UTC). `deg`, `pr` (PageRank) and `comm` (Louvain) 
 
 - Correlations (longer chain ↔ lower completion) are not causes.
 - Canvas 2D handles a few thousand nodes; keep slices under ~5–8k.
-- Traffy data: check the provider's terms before publishing larger real extracts.
+- "Finished" is a Traffy status: an agency may act without closing the ticket. List order in `organization`
+  is assumed to equal handoff order.
+- The Graph RAG answers on the slides were written ahead of time by Claude from retrieved context only
+  (a static site holds no API key). Retrieval is real code in `pipeline/graphrag_demo.py`.
+- Handoffs below the size cutoffs are pruned, so very small agencies do not appear.
 
 ## Layout
 
 ```
-index.html  deck/{deck.css,deck.js}                      slides
+index.html  deck/{deck.css,deck.js,assets/}               slides (22, with live graph embeds)
 explorer/   index.html, css/, js/{app,graph,layout,render,theme,embed}.js
-data/       datasets.json, traffy.json, traffy_insights.json
-pipeline/   graphkit.py, traffy_handoff.py
+data/       datasets.json, traffy.json, traffy_insights.json, traffy_story.json, graphrag_demo.json
+pipeline/   graphkit.py, traffy_handoff.py, traffy_story.py, graphrag_demo.py
 ```
+The explorer has a phone layout (filter drawer, pinch zoom, tap to select); the extra time controls are desktop-only.
