@@ -37,6 +37,7 @@ function fit() {
 addEventListener('resize', fit); fit();
 
 const onStep = {};
+const onEnter = {};
 function applySteps() {
   $$('.fx', slides[cur]).forEach((n) => n.classList.toggle('on', +n.dataset.s <= step));
   (onStep[cur] || (() => {}))(step);
@@ -335,6 +336,7 @@ function chartLen() {
 function chartEnds() {
   const rows = [...ST.end_groups].sort((a, b) => b.fin - a.fin);
   const W = 600, rowH = 40, H = rows.length * rowH + 46, pl = 168, max = 100;
+  const anim = [];
   const svg = sv('svg', { viewBox: `0 0 ${W} ${H}` });
   const t = sv('text', { x: 0, y: 18, fill: T2, 'font-size': 14 }); t.textContent = 'Finished within 90 days, by the agency a ticket ends at'; svg.append(t);
   rows.forEach((r, i) => {
@@ -342,11 +344,19 @@ function chartEnds() {
     const outside = r.group === 'Police' || r.group === 'Other outside body';
     const col = outside ? ORANGE : r.group.startsWith('District') ? GREEN : BLUE;
     const l = sv('text', { x: pl - 10, y: yy + 19, 'text-anchor': 'end', fill: T1, 'font-size': 14 }); l.textContent = r.group; svg.append(l);
-    svg.append(sv('rect', { x: pl, y: yy + 4, width: w, height: 22, rx: 5, fill: col }));
+    const bar = sv('rect', { x: pl, y: yy + 4, width: w, height: 22, rx: 5, fill: col });
+    bar.style.transformBox = 'fill-box'; bar.style.transformOrigin = 'left center'; svg.append(bar);
     const v = sv('text', { x: pl + w + 8, y: yy + 20, fill: T1, 'font-size': 15, 'font-weight': 700 }); v.textContent = Math.round(r.fin) + '%'; svg.append(v);
     const s = sv('text', { x: pl + w + 52, y: yy + 20, fill: MUTED, 'font-size': 12 }); s.textContent = `${r.share_pct}% of tickets`; svg.append(s);
+    anim.push([bar, v, s]);
   });
   $('#chart-ends').append(svg);
+  // bars grow to their value each time the slide is opened
+  onEnter[slides.indexOf($('#chart-ends').closest('.slide'))] = () => anim.forEach(([bar, v, s], i) => {
+    const o = { duration: 750, delay: i * 110, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' };
+    bar.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], o);
+    [v, s].forEach((n) => n.animate([{ opacity: 0 }, { opacity: 0 }, { opacity: 1 }], { ...o, duration: 900 }));
+  });
 }
 chartPolice(); chartLen(); chartEnds();
 
@@ -566,6 +576,7 @@ function ragInit(g) {
 }
 
 function enter(i) {
+  (onEnter[i] || (() => {}))();
   const k = slides[i].dataset.embed; if (!k) return;
   const g = ensure(k); g.start();
   if (k !== 'stack') g.fit();
