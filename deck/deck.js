@@ -22,7 +22,7 @@ const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
 const BLUE = '#3987e5', ORANGE = '#d95926', GREEN = '#199e70', AMBER = '#e5a000', T1 = '#1a1a19', T2 = '#4a4943', MUTED = '#6f6e67', LINE = '#dcdad2';
 const EXPLORER = 'explorer/index.html';
 const en = (label) => (label.includes(' · ') ? label.split(' · ').slice(1).join(' · ') : label);       // English gloss if we have one
-const th = (label) => label.split(' · ')[0];
+const th = (label) => label.split(' · ')[0].replace(/\s*\([A-Za-z .-]+\)/g, '');
 const shortTh = (s) => s.replace(/ กทม\./g, '').replace(/\s+/g, ' ');
 
 // ------------------------------------------------------------------ stage + navigation
@@ -88,11 +88,12 @@ const [RAW, INS, ST, RD] = await Promise.all([
   fetch(base('graphrag_demo.json')).then((r) => r.json()),
 ]);
 const B = ST.basics, F = ST.funnel, P = ST.police;
+RAW.nodes.forEach((n) => { n.label = th(n.label); }); // slides show Thai names only
 const inHand = new Set(); RAW.edges.forEach((e) => { if (e.type === 'handoff') { inHand.add(e.s); inHand.add(e.t); } });
 const kinds = RAW.nodes.reduce((a, n, i) => { if (inHand.has(i)) a[n.type] = (a[n.type] || 0) + 1; return a; }, {});
 const nodeById = new Map(RAW.nodes.map((n) => [n.id, n]));
 const idByPrefix = (p) => (RAW.nodes.find((n) => n.id.startsWith(p)) || {}).id;
-const idByLabel = (l) => (RAW.nodes.find((n) => n.label === l) || {}).id;
+const idByLabel = (l) => (RAW.nodes.find((n) => n.label === th(l)) || {}).id;
 const link = (hash) => `${EXPLORER}#${new URLSearchParams(hash).toString()}`;
 const isPolice = (n) => /ตำรวจ|Police/.test(n.label) || n.label.startsWith('สน.');
 const policeIds = RAW.nodes.filter((n) => n.type === 'Agency' && isPolice(n)).map((n) => n.id);
@@ -180,7 +181,7 @@ $('#sq4').textContent = `${fmt(F.distinct_pairs)} edges`;
   const nodes = ex.chain.map((c, k) => {
     const node = el('div', { class: 'pnode' });
     if (k > 0) node.append(el('u', { class: 'parrow' }));
-    node.append(el('i', { class: c.kind === 'D' ? 'd' : 'a' }), el('span', {}, gloss(c) || clip(c.short, 22)));
+    node.append(el('i', { class: c.kind === 'D' ? 'd' : 'a' }), el('span', {}, clip((c.kind === 'D' ? 'เขต' : '') + th(shortTh(c.node.replace(/^[A-Z]:/, ''))), 24)));
     ngrid.append(node); return node;
   });
   box.append(el('div', { class: 'plab a' }, 'the cell'), xl, el('div', { class: 'plab b' }, 'the graph'), ngrid);
@@ -220,7 +221,7 @@ $('#sq4').textContent = `${fmt(F.distinct_pairs)} edges`;
     g1.append(sv('circle', { cx: p.x, cy: p.y, r: 34, fill: GREEN, stroke: '#fff', 'stroke-width': 3 }));
     const fo = sv('foreignObject', { x: p.x - 110, y: p.y + 44, width: 220, height: 70 });
     const d = document.createElement('div'); d.style.cssText = 'font-size:15px;line-height:1.3;text-align:center;color:#1a1a19;font-family:inherit';
-    d.textContent = en(lab); fo.append(d); g1.append(fo);
+    d.textContent = th(lab); fo.append(d); g1.append(fo);
   });
   const call = (txt, x, y) => { const t = sv('text', { x, y, 'text-anchor': 'middle', fill: BLUE, 'font-size': 15, 'font-weight': 600 }); t.textContent = txt; return t; };
   g1.append(call('node', A.x, 130));
@@ -345,7 +346,7 @@ const pY = P.by_year.filter((r) => r.year >= 2023), p26 = pY[pY.length - 1], p24
 dec('#dec-police', '<b>Close the loop.</b> Agree a status return with the police units, or stop routing tickets nobody closes.', 'BMA Traffy team with the Metropolitan Police liaison',
   `Police-touched finish rate, 2026: <b>${Math.round(p26.police_fin)}%</b> vs <b>${Math.round(p26.other_fin)}%</b>`);
 $('#cav-police').textContent = `“Finished” is the Traffy status. Police may act without closing a ticket, so this tracks the loop. ${fmt(P.tickets)} tickets (${P.share_of_tickets_pct}%) touch a police unit.`;
-$('#police-cap').innerHTML = `<b>${policeIds.length}</b> police units highlighted. Typical route: district office → local station → Metropolitan Police → Royal Thai Police → division.`;
+$('#police-cap').innerHTML = `<b>${policeIds.length}</b> police units highlighted. Typical route: เขต → สน. → บช.น. → สำนักงานตำรวจแห่งชาติ → บก.น..`;
 
 const L = ST.length, shortRow = L[1], longRow = L[L.length - 1];
 const share5 = (L.filter((r) => r.len >= 5).reduce((a, r) => a + r.n, 0) / L.reduce((a, r) => a + r.n, 0));
@@ -488,7 +489,7 @@ function edgeListInit(g) {
   const tb = $('#edgetab tbody');
   INS.top_handoffs.slice(0, 7).forEach((h) => {
     const tr = el('tr');
-    tr.append(el('td', {}, clip(en(h.from), 30)), el('td', {}, '→'), el('td', {}, clip(en(h.to), 30)), el('td', {}, fmt(h.tickets)));
+    tr.append(el('td', {}, clip(th(h.from), 30)), el('td', {}, '→'), el('td', {}, clip(th(h.to), 30)), el('td', {}, fmt(h.tickets)));
     tr.onclick = () => {
       $$('tr', tb).forEach((r) => r.classList.toggle('on', r === tr));
       g.highlight([idByLabel(h.from), idByLabel(h.to)].filter(Boolean));
@@ -510,13 +511,13 @@ function metricsInit(g) {
   };
   const winners = new Set(Object.values(C).map((l) => l[0].id));
   const tab = $('#metric-all');
-  Object.entries(META).forEach(([k, [name]]) => { const tr = el('tr', { 'data-k': k }); tr.append(el('td', {}, name), el('td', {}, clip(en(C[k][0].label), 38))); tab.append(tr); });
+  Object.entries(META).forEach(([k, [name]]) => { const tr = el('tr', { 'data-k': k }); tr.append(el('td', {}, name), el('td', {}, clip(th(C[k][0].label), 38))); tab.append(tr); });
   const chips = $('#metric-chips');
   const show = (k) => {
     $$('.chip', chips).forEach((c) => c.classList.toggle('on', c.dataset.k === k));
     $$('tr', $('#metric-all')).forEach((r) => r.classList.toggle('on', r.dataset.k === k));
     $('#metric-q').textContent = META[k][1];
-    $('#metric-top').replaceChildren(...C[k].map((x, i) => { const li = el('li'); li.innerHTML = `<b>${clip(en(x.label), 40)}</b> <span>${x.score.toFixed(3)}</span>`; if (i === 0) li.style.color = T1; return li; }));
+    $('#metric-top').replaceChildren(...C[k].map((x, i) => { const li = el('li'); li.innerHTML = `<b>${clip(th(x.label), 40)}</b> <span>${x.score.toFixed(3)}</span>`; if (i === 0) li.style.color = T1; return li; }));
     g.clear(); g.select(C[k][0].id);
   };
   Object.entries(META).forEach(([k, [name]]) => { const c = el('button', { class: 'chip', 'data-k': k }, name); c.onclick = () => show(k); chips.append(c); });
