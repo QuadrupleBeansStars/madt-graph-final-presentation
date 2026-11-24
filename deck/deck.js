@@ -313,11 +313,13 @@ function chartLen() {
     svg.append(sv('line', { x1: pl, x2: W - 6, y1: y(g), y2: y(g), stroke: LINE, 'stroke-width': g === 0 ? 1.5 : 1 }));
     const t = sv('text', { x: pl - 8, y: y(g) + 4, 'text-anchor': 'end', fill: MUTED, 'font-size': 12 }); t.textContent = g + '%'; svg.append(t);
   });
+  const barGs = [];
   rows.forEach((r, i) => {
     const x = pl + 8 + i * (bw + gap), top = y(r.fin), hot = r.len >= 5;
-    svg.append(sv('rect', { x, y: top, width: bw, height: y(0) - top, rx: 5, fill: hot ? ORANGE : BLUE }));
-    svg.append(sv('rect', { x, y: y(0) - 4, width: bw, height: 4, fill: hot ? ORANGE : BLUE }));
-    const put = (txt, yy, size, w, c) => { const t = sv('text', { x: x + bw / 2, y: yy, 'text-anchor': 'middle', fill: c, 'font-size': size, 'font-weight': w }); t.textContent = txt; svg.append(t); };
+    const bg = sv('g', {}); bg.style.transition = 'opacity .45s'; bg.style.opacity = 0; svg.append(bg); barGs.push(bg);
+    bg.append(sv('rect', { x, y: top, width: bw, height: y(0) - top, rx: 5, fill: hot ? ORANGE : BLUE }));
+    bg.append(sv('rect', { x, y: y(0) - 4, width: bw, height: 4, fill: hot ? ORANGE : BLUE }));
+    const put = (txt, yy, size, w, c) => { const t = sv('text', { x: x + bw / 2, y: yy, 'text-anchor': 'middle', fill: c, 'font-size': size, 'font-weight': w }); t.textContent = txt; bg.append(t); };
     put(Math.round(r.fin) + '%', top - 8, 16, 700, T1);
     put(r.label, y(0) + 22, 15, 400, T1);
     put(`${r.median_days} d`, y(0) + 42, 13, 400, T2);
@@ -326,6 +328,9 @@ function chartLen() {
   const ax = sv('text', { x: 0, y: 18, fill: T2, 'font-size': 14 }); ax.textContent = 'Finished within 90 days, by number of agencies on the ticket'; svg.append(ax);
   const al = sv('text', { x: 4, y: y(0) + 42, fill: MUTED, 'font-size': 11 }); al.textContent = 'median days'; svg.append(al);
   $('#chart-len').append(svg);
+  // reveal one bar per click, then the decision and the caveat
+  const lenSlide = $('#chart-len').closest('.slide');
+  onStep[slides.indexOf(lenSlide)] = (st) => barGs.forEach((g, i) => { g.style.opacity = st >= i + 1 ? 1 : 0; });
 }
 function chartEnds() {
   const rows = [...ST.end_groups].sort((a, b) => b.fin - a.fin);
