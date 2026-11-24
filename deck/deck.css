@@ -447,3 +447,18 @@ img.qr, .qrcol .qr { width: 400px !important; height: auto !important; max-width
 .ba .mc u { color: var(--green); }
 .ba .arw { align-self: center; text-align: center; font-size: 24px; color: var(--t3, #8e8d86); } .ba .arw small { display: block; font-size: 11px; letter-spacing: .04em; }
 .ba { grid-template-columns: minmax(0,1fr) 46px minmax(0,1fr); } .ba .bx { min-width: 0; } .ba table { table-layout: fixed; } .ba td, .ba th { max-width: none; }
+/* v10: Graph RAG idea slide, what each retriever returns */
+.askq { margin: 44px 0 0; font-size: 46px; } .askq small { display: block; margin-top: 6px; font-size: 22px; font-weight: 500; color: var(--t3, #8e8d86); letter-spacing: 0; }
+.rag2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 34px; }
+.rp { background: var(--surface2); border: 1px solid var(--line); border-radius: 14px; padding: 22px 28px 20px; min-height: 380px; }
+.rp.graph { border-color: var(--green); box-shadow: 0 0 0 1px var(--green) inset; }
+.rp h4 { margin: 0; text-transform: none; letter-spacing: 0; font-size: 20px; color: var(--t2); }
+.rp .big { font-size: 54px; font-weight: 800; letter-spacing: -.02em; margin-top: 4px; } .rp.graph .big { color: var(--green); }
+.rp .sub { margin: 0 0 14px; font-size: 17px; color: var(--t3, #8e8d86); }
+.rp .cap { margin: 14px 0 0; font-size: 18px; line-height: 1.4; color: var(--t2); }
+.rr { display: grid; grid-template-columns: 90px 1fr auto; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 16px; align-items: center; }
+.rr b { font-family: ui-monospace, monospace; font-size: 14px; color: var(--t2); } .rr span { color: var(--t1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rr i { font-style: normal; color: var(--blue); font-size: 14px; }
+.rb { display: grid; grid-template-columns: 210px 1fr 48px; gap: 12px; align-items: center; padding: 6px 0; font-size: 17px; }
+.rb span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rb b { text-align: right; }
+.rb .tr { height: 16px; background: #1f1f1d10; border-radius: 8px; overflow: hidden; } .rb .fl { height: 100%; background: var(--green); border-radius: 8px; } .rb .fl.bad { background: var(--orange); }
+.rb { grid-template-columns: 290px 1fr 44px; font-size: 16px; }

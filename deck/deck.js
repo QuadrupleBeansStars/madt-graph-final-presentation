@@ -108,7 +108,20 @@ $('#t-tickets').textContent = (B.tickets / 1e6).toFixed(1) + 'M';
 $('#t-perday').textContent = fmt(B.per_day);
 $('#t-avg').textContent = B.avg_chain.toFixed(1);
 $('#t-hotline').textContent = Math.round(B.hotline_pct) + '%';
-$('#rag-n').textContent = fmt(B.tickets);
+{ // slide 17: what each retriever returns for the same question
+  const q = RD.questions[0];
+  $('#rq-th').textContent = `“${q.question_th}”`; $('#rq-en').textContent = q.question;
+  const rows = q.plain_rows;
+  $('#rp-big-rows').textContent = `${rows.length} rows`;
+  $('#rp-rows').replaceChildren(...rows.map((r) => el('div', { class: 'rr' }, el('b', {}, r.ticket_id.replace(/^\d{4}-/, '')), el('span', {}, clip(r.type.split(' - ')[0], 30)), el('i', {}, r.state))));
+  $('#rp-cap-rows').textContent = `None is a traffic violation, and each ends at the district office. Nothing here shows where tickets stall.`;
+  const cat = q.facts[0].match(/([\d,]+) tickets/)[1];
+  $('#rp-big-graph').textContent = `${cat} tickets`;
+  const routes = q.facts.map((f) => f.match(/^(.*?) —routed_to→ (.*?)(?: · [^:]*)?: ([\d,]+) tickets; this agency finishes (\d+)%/)).filter(Boolean)
+    .map((m) => ({ name: th(m[2]), n: +m[3].replace(/,/g, ''), fin: +m[4] })).sort((a, b) => b.n - a.n).slice(0, 4);
+  $('#rp-bars').replaceChildren(...routes.map((r) => el('div', { class: 'rb' }, el('span', {}, clip(r.name, 40)), el('div', { class: 'tr' }, el('div', { class: 'fl' + (r.fin < 60 ? ' bad' : ''), style: `width:${r.fin}%` })), el('b', {}, r.fin + '%'))));
+  $('#rp-cap-graph').textContent = 'Share finished within 90 days, per agency the category is routed to. Counted over all tickets, so the stall shows up.';
+}
 $('#d-nodes').textContent = `${kinds.Agency} agencies and ${kinds.District} district offices in the published graph.`;
 
 // ------------------------------------------------------------------ slide 3: real rows

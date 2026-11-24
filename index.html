@@ -238,10 +238,20 @@
     <section class="slide" data-steps="3">
       <span class="ch">Graph RAG module</span>
       <h2>Rows can’t answer “why”. A graph can retrieve the path</h2>
-      <p class="askq fx" data-s="1">“Why do traffic-violation complaints stall?”</p>
-      <div class="cols" style="margin-top:28px">
-        <div class="col fx" data-s="2"><div class="cmp"><h4>Plain RAG over rows</h4><p>Retrieves the few rows that look most like the question. Good for “show me a ticket like this”. Cannot count, follow a route, or tell you what is typical.</p></div></div>
-        <div class="col fx" data-s="3"><div class="cmp g"><h4>Graph RAG</h4><p>Retrieves a path or neighbourhood computed over <b>all</b> <span id="rag-n"></span> tickets. Answers about structure — where, how many, who is upstream — come with the edges that support them.</p></div></div>
+      <p class="askq fx" data-s="1"><span id="rq-th"></span><small id="rq-en"></small></p>
+      <div class="rag2">
+        <div class="rp rows fx" data-s="2">
+          <h4>Plain RAG over rows</h4>
+          <div class="big" id="rp-big-rows"></div><p class="sub">the rows that look most like the question</p>
+          <div class="rlist" id="rp-rows"></div>
+          <p class="cap" id="rp-cap-rows"></p>
+        </div>
+        <div class="rp graph fx" data-s="3">
+          <h4>Graph RAG</h4>
+          <div class="big" id="rp-big-graph"></div><p class="sub">every traffic-violation ticket, as one picture</p>
+          <div class="rbars" id="rp-bars"></div>
+          <p class="cap" id="rp-cap-graph"></p>
+        </div>
       </div>
     </section>
 
