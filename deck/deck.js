@@ -554,7 +554,6 @@ function metricsInit(g) {
     g.clear(); g.select(C[k][0].id);
   };
   Object.entries(META).forEach(([k, [name]]) => { const c = el('button', { class: 'chip', 'data-k': k }, name); c.onclick = () => show(k); chips.append(c); });
-  $('#metric-note').innerHTML = `Same graph, same agencies: <b>${winners.size}</b> different winners across the five questions. Which metric is “right” depends on the decision.`;
   show('degree');
 }
 
