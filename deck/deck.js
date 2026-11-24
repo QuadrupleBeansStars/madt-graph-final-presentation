@@ -286,15 +286,20 @@ function chartPolice() {
     const tx_ = sv('text', { x: pl - 8, y: y(g) + 4, 'text-anchor': 'end', fill: MUTED, 'font-size': 12 }); tx_.textContent = g + '%'; svg.append(tx_);
   });
   const series = [['police_fin', ORANGE, 'Police-touched'], ['other_fin', BLUE, 'All other tickets']];
+  let policeG = null;
   series.forEach(([k, col, name]) => {
-    svg.append(sv('polyline', { fill: 'none', stroke: col, 'stroke-width': 3, points: rows.map((r, i) => `${x(i)},${y(r[k])}`).join(' ') }));
+    const g = sv('g', {}); svg.append(g);
+    if (k === 'police_fin') { policeG = g; g.style.transition = 'opacity .5s'; g.style.opacity = 0; }
+    g.append(sv('polyline', { fill: 'none', stroke: col, 'stroke-width': 3, points: rows.map((r, i) => `${x(i)},${y(r[k])}`).join(' ') }));
     rows.forEach((r, i) => {
-      svg.append(sv('circle', { cx: x(i), cy: y(r[k]), r: 5, fill: col, stroke: '#fcfcfb', 'stroke-width': 2 }));
-      const v = sv('text', { x: x(i), y: y(r[k]) + (k === 'other_fin' ? -12 : 20), 'text-anchor': 'middle', fill: T1, 'font-size': 14, 'font-weight': 700 }); v.textContent = Math.round(r[k]) + '%'; svg.append(v);
+      g.append(sv('circle', { cx: x(i), cy: y(r[k]), r: 5, fill: col, stroke: '#fcfcfb', 'stroke-width': 2 }));
+      const v = sv('text', { x: x(i), y: y(r[k]) + (k === 'other_fin' ? -12 : 20), 'text-anchor': 'middle', fill: T1, 'font-size': 14, 'font-weight': 700 }); v.textContent = Math.round(r[k]) + '%'; g.append(v);
     });
     const last = rows[rows.length - 1];
-    const lb = sv('text', { x: x(rows.length - 1) + 14, y: y(last[k]) + 5, fill: col === ORANGE ? '#a8420f' : '#1f5fb0', 'font-size': 15, 'font-weight': 600 }); lb.textContent = name; svg.append(lb);
+    const lb = sv('text', { x: x(rows.length - 1) + 14, y: y(last[k]) + 5, fill: col === ORANGE ? '#a8420f' : '#1f5fb0', 'font-size': 15, 'font-weight': 600 }); lb.textContent = name; g.append(lb);
   });
+  // reveal: all other tickets first, so the audience can guess where police-touched sits
+  onStep[slides.indexOf($('#chart-police').closest('.slide'))] = (st) => { policeG.style.opacity = st >= 1 ? 1 : 0; };
   rows.forEach((r, i) => { const l = sv('text', { x: x(i), y: H - 18, 'text-anchor': 'middle', fill: T1, 'font-size': 14 }); l.textContent = r.year; svg.append(l); });
   const nn = sv('text', { x: pl, y: H - 2, fill: MUTED, 'font-size': 11 }); nn.textContent = `n = ${fmt(P.n_old)} tickets at least 120 days old`; svg.append(nn);
   $('#chart-police').append(svg);
